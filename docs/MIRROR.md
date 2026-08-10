@@ -98,6 +98,23 @@ python3 tools/extract_sources.py    # استخراج دوباره‌ی سورس�
 مشکلی ایجاد نمی‌کند. به همین دلیل `.mirror/original/` و `manifest.json` عمداً
 کامیت شده‌اند.
 
+## تغییرات دستی روی `site/`
+
+نوار ویرایش Framer از خروجی حذف شده. سه جا دست خورده:
+
+- `site/index.html` و `site/404.html` — اسکریپت `<head>` که وقتی کلید
+  `__framer_force_showing_editorbar_since` در `localStorage` باشد یک
+  `modulepreload` به `framer.com/edit/init.mjs` اضافه می‌کرد.
+- `site/_cdn/.../script_main.BQCGJx_S.mjs` — مقدار `EditorBar` که یک
+  `import("https://framer.com/edit/init.mjs")` تنبل بود، با `void 0` جایگزین
+  شد. کامپوننت `vu({EditorBar})` وقتی این مقدار falsy باشد `null` برمی‌گرداند،
+  پس نوار اصلاً رندر نمی‌شود.
+
+**این تغییرات با `mirror.py --rewrite` برمی‌گردند**، چون بازنویسی همیشه از روی
+`.mirror/original/` انجام می‌شود و آنجا نسخه‌ی دست‌نخورده‌ی origin است (که
+عمدی است — بررسی sha256 به همان نسخه تکیه می‌کند). بعد از هر `--rewrite` باید
+دوباره حذفشان کنی.
+
 ## چیزهایی که عمداً دانلود نشدند
 
 اینها اسکریپت‌های شخص ثالث‌اند و برای ظاهر یا کارکرد سایت لازم نیستند. تگ‌هایشان
