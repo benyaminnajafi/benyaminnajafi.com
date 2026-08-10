@@ -17,6 +17,8 @@ cross-functional teams to deliver measurable business outcomes.
 
 *Product Design Manager · Product Strategy · Crypto & Investment*
 
+<img src="site/_cdn/framerusercontent.com/images/cDnTxkGsXrhfWgzNvxNRJ1GKo__scale-down-to-1024-width-1920-height-1440.png" width="520" alt="Crypto trading app screens from the redesigned platform">
+
 Spearheaded a complete platform redesign by establishing a robust, scalable
 design system to ensure long-term consistency.
 
@@ -29,6 +31,8 @@ design system to ensure long-term consistency.
 ### Redefining Grocery Discovery: The Shift to a Vendor-Less Shopping Architecture
 
 *Product Designer · Flow & Research · FMCG (Grocery)*
+
+<img src="site/_cdn/framerusercontent.com/images/7LcKjB1tEILbCXIlUc885nUgSHs__scale-down-to-1024-width-1920-height-1440.png" width="520" alt="Grocery app product discovery and purchase flow">
 
 Led the transition from a restrictive vendor-first model to a unified
 "Product-Based" experience by analyzing quantitative funnels (Metabase) and
@@ -46,6 +50,8 @@ data-driven strategy that drastically shortened the user journey and decision ti
 
 *Product Design Manager · Shipping & Delivery · Fintech*
 
+<img src="site/_cdn/framerusercontent.com/images/7tL8ONjwcOGoMdrD1MWO8bMw__scale-down-to-1024-width-1920-height-1440.png" width="520" alt="National fintech platform on desktop and tablet">
+
 Managed the entire product development process end-to-end to ensure seamless
 delivery from design to deployment. This included handing over finalized designs
 to infrastructure, backend, frontend, and QA teams, and supervising the planning,
@@ -55,6 +61,8 @@ efficient, high-quality, and aligned with both user needs and business objective
 ### Modernization Without Disruption: Rolling Out a Design System on a Live Operation
 
 *Product Designer Lead · Design System & Flow · Retail*
+
+<img src="site/_cdn/framerusercontent.com/images/GYgInxGLieOQyTFSRmBjcKoj6yo__scale-down-to-1024-width-1920-height-1440.png" width="520" alt="Retail storefront rebuilt on the new design system">
 
 A dual mandate: build the team and modernize the product without disrupting a
 live operation.
@@ -71,6 +79,8 @@ live operation.
 ### Founding a Fintech: From Rapid Ideation to Market Launch
 
 *Founding Product Designer · MVP Design & Planning · Fintech (Investment)*
+
+<img src="site/_cdn/framerusercontent.com/images/Nb9R8mhVqgeVMlKEngooYuHVPSM__scale-down-to-1024-width-10000-height-7500.webp" width="520" alt="Melted gold trading and storage app screens">
 
 Spearheaded the zero-to-one product and service design for a novel melted gold
 trading and storage platform, navigating established market limitations and
