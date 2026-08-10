@@ -1,153 +1,112 @@
-# benyaminnajafi.com — نسخه‌ی محلی و قابل توسعه
+# Benyamin Najafi — Senior Product Designer
 
-کپی کامل و آفلاین سایت منتشرشده روی Framer: هر دو صفحه، همه‌ی ماژول‌های JS،
-همه‌ی تصاویر (با همه‌ی نسخه‌های اندازه‌شان)، و همه‌ی فونت‌ها.
+10+ years of experience leading design teams to build scalable products, from
+0→1 startups to market-leading platforms. I drive product discovery and align
+cross-functional teams to deliver measurable business outcomes.
 
-**۲۲۲ فایل، ۳۵ مگابایت** — ۱۰۸ تصویر PNG، ۵۲ فونت، ۳۳ فایل JS، ۱۵ source map،
-۶ webp، ۲ jpeg، ۱ svg. همه بایت‌به‌بایت مطابق origin. به‌علاوه ۴۴ فایل سورس
-استخراج‌شده در `sources/`.
+**[benyaminnajafi.com](https://benyaminnajafi.com)** ·
+[LinkedIn](https://www.linkedin.com/in/benyaminnajafi/) ·
+[CV](https://docs.google.com/document/d/1U0G8k3SevXh0VfPRWspxLJo8dXJe-QLG2PvuZFJpFEg/edit?usp=sharing) ·
+[ben.najafi@gmail.com](mailto:ben.najafi@gmail.com)
 
-## اجرا
+---
+
+## Selected case studies
+
+### Scaling to 4.5M Users: A Data-Driven Platform Redesign
+
+*Product Design Manager · Product Strategy · Crypto & Investment*
+
+Spearheaded a complete platform redesign by establishing a robust, scalable
+design system to ensure long-term consistency.
+
+- **Leadership** — led a team of 7 to iterate and enhance the core product experience.
+- **Continuous discovery** — targeted user needs by blending qualitative insights
+  with quantitative data (Heap, Clarity, PostHog, Metabase).
+- **Massive impact** — fueled hyper-growth by scaling the platform's user base
+  from 700,000 to over 4.5 million.
+
+### Redefining Grocery Discovery: The Shift to a Vendor-Less Shopping Architecture
+
+*Product Designer · Flow & Research · FMCG (Grocery)*
+
+Led the transition from a restrictive vendor-first model to a unified
+"Product-Based" experience by analyzing quantitative funnels (Metabase) and
+qualitative behaviors (Hotjar session recordings and usability tests). To reduce
+interaction cost, I completely redesigned the core purchase flow — an iterative,
+data-driven strategy that drastically shortened the user journey and decision time.
+
+- Shifted user behavior by prioritizing product discovery over store selection.
+- Scaled the feature from an experimental MVP to a core flow, increasing
+  search-to-cart conversion.
+- Established a robust foundation for a vendor-less shopping architecture
+  across the platform.
+
+### Orchestrating Delivery at Scale: A Complete Upgrade of a National Fintech Platform
+
+*Product Design Manager · Shipping & Delivery · Fintech*
+
+Managed the entire product development process end-to-end to ensure seamless
+delivery from design to deployment. This included handing over finalized designs
+to infrastructure, backend, frontend, and QA teams, and supervising the planning,
+testing, and release phases. Overseeing the full workflow kept execution
+efficient, high-quality, and aligned with both user needs and business objectives.
+
+### Modernization Without Disruption: Rolling Out a Design System on a Live Operation
+
+*Product Designer Lead · Design System & Flow · Retail*
+
+A dual mandate: build the team and modernize the product without disrupting a
+live operation.
+
+- Assembled the product design team end-to-end — defining roles, hiring and
+  onboarding, and setting rituals (crits, design reviews, async specs) that
+  tightened collaboration with Product & Engineering.
+- Architected a new design system (tokens, components, accessibility, content
+  guidelines) with clear governance and versioning.
+- De-risked change by auditing and documenting every current-state flow,
+  clarifying ownership, and establishing canonical user journeys, then managing
+  a phased migration with compatibility tracking and team training.
+
+### Founding a Fintech: From Rapid Ideation to Market Launch
+
+*Founding Product Designer · MVP Design & Planning · Fintech (Investment)*
+
+Spearheaded the zero-to-one product and service design for a novel melted gold
+trading and storage platform, navigating established market limitations and
+shaping a strong go-to-market strategy.
+
+- **Accelerated product delivery** — partnered cross-functionally with two 10x
+  engineers for rapid ideation, swift decision-making, and seamless implementation.
+- **Strategic market positioning** — conducted comprehensive UX audits of all
+  competitors to analyze qualitative and quantitative market realities.
+- **Scaled team infrastructure** — recruited and onboarded the foundational
+  product and engineering team, including senior product designers and frontend
+  developers.
+
+---
+
+## About this repository
+
+This repo holds the source of [benyaminnajafi.com](https://benyaminnajafi.com) —
+a fully self-contained static build of the site, with every JS module, image,
+and font served from this repository rather than a third-party CDN. It is
+deployed to GitHub Pages by [a workflow](.github/workflows/deploy.yml) on every
+push to `main`.
+
+Run it locally:
 
 ```bash
 python3 tools/serve.py
 ```
 
-بعد <http://127.0.0.1:8000/> را باز کن.
+Then open <http://127.0.0.1:8000/>. It has to be served over HTTP rather than
+opened as a `file://` path, because the page loads its bundles as ES modules.
 
-سایت **باید** از روی یک وب‌سرور اجرا شود، نه با باز کردن مستقیم فایل
-(`file://`). دلیلش این است که صفحه بسته‌هایش را به‌صورت ES module بارگذاری
-می‌کند و مرورگرها بارگذاری ماژول از `file://` را به‌خاطر CORS مسدود می‌کنند.
-`tools/serve.py` علاوه بر این، `.mjs` را با MIME درست سرو می‌کند و برای
-مسیرهای ناشناخته `404.html` را برمی‌گرداند — همان کاری که سایت اصلی می‌کند.
+The site is built with React 18 and framer-motion, bundled by Rolldown, with all
+CSS inline in `index.html` and no build step of its own. Custom components
+(smooth scroll, theme switching, ticker) have their original TypeScript sources
+under [`sources/`](sources).
 
-## ساختار
-
-```
-site/                      نسخه‌ی قابل اجرا و ویرایش
-  index.html               صفحه‌ی اصلی (مسیر /)
-  404.html                 صفحه‌ی ۴۰۴ (مسیر /404)
-  _cdn/
-    framerusercontent.com/
-      images/              تصاویر + نسخه‌های scale-down-to
-      assets/              فونت‌های اختصاصی، تصویر Open Graph
-      sites/<site-id>/     ماژول‌های JS سایت + searchIndex
-      third-party-assets/
-    fonts.gstatic.com/     فونت‌های Google (Manrope، Be Vietnam Pro، …)
-
-sources/                   سورس اصلی، استخراج‌شده از source map ها
-tools/
-  mirror.py                دانلودر/کراولر (قابل اجرای مجدد)
-  extract_sources.py       استخراج سورس از فایل‌های .map
-  serve.py                 وب‌سرور محلی
-.mirror/
-  manifest.json            نگاشت کامل URL → فایل محلی، با sha256
-  original/                نسخه‌ی دست‌نخورده‌ی فایل‌های متنی
-  mirror.log               لاگ کامل دانلود
-```
-
-## چطور ساخته شد
-
-سایت روی Framer منتشر شده. HTML از خود `benyaminnajafi.com` می‌آید، ولی
-تمام assetها روی `framerusercontent.com` هستند که یک توزیع AWS CloudFront است
-و **دسترسی از ایران را بلاک می‌کند** (`The Amazon CloudFront distribution is
-configured to block access from your country`).
-
-به همین دلیل `tools/mirror.py` برای هر فایل اول مسیر مستقیم را امتحان می‌کند و
-اگر بسته بود از یک رله‌ی عمومی رد می‌شود. وضعیت مسیر مستقیم هر ۴۵ ثانیه دوباره
-سنجیده می‌شود، پس اگر وسط کار VPN را روشن کنی، بقیه‌ی دانلود خودبه‌خود از مسیر
-سریع می‌رود.
-
-نکات دیگر:
-
-- **`&amp;` در برابر `&`** — یک URL در `srcset` با `&amp;` و در جای دیگر با `&`
-  نوشته می‌شود. هر دو املا به یک فایل نگاشت می‌شوند و هنگام بازنویسی هم هر دو
-  شکل جایگزین می‌شوند.
-- **نسخه‌های تصویر** — `foo.png?scale-down-to=512&width=1920` جدا از
-  `foo.png` ذخیره می‌شود، با نامی مثل `foo__scale-down-to-512-width-1920.png`،
-  تا `srcset` دقیقاً مثل سایت اصلی کار کند.
-- **مسیرها در JS** — آدرس تصویرهایی که داخل ماژول‌های JS به‌صورت رشته آمده‌اند،
-  توسط مرورگر نسبت به **صفحه** حل می‌شوند نه نسبت به خود ماژول. برای همین این
-  مسیرها نسبت به ریشه‌ی `site/` بازنویسی شده‌اند، نه نسبت به فایل ماژول.
-- **`import` با بک‌تیک** — Framer صفحه‌هایش را با
-  ``import(`./Page.hash.mjs`)`` بارگذاری می‌کند. کراولر بک‌تیک را هم می‌شناسد،
-  وگرنه خود ماژول‌های صفحات دانلود نمی‌شدند.
-- **اعتبارسنجی** — هر فایل با magic bytes (PNG/WEBP/WOFF2/…) یا با پارس JSON
-  بررسی می‌شود، تا صفحه‌های خطای رله به‌جای فایل واقعی ذخیره نشوند.
-- **تشخیص فایل بریده** — این مهم‌ترین بررسی است. یکی از رله‌ها چند بار با وضعیت
-  ۲۰۰ و بدون هیچ خطایی فایل را وسط راه قطع کرد؛ `react.mjs` دقیقاً ۷۵٬۶۸۳ بایتِ
-  اول از فایل ۱۴۴٬۶۷۲ بایتی بود. نه هدر لو می‌داد نه بایت‌های ابتدایی. سه لایه
-  جلویش را می‌گیرد: کد خروجی `curl` (۱۸ = انتقال ناقص)، پایانِ فایل برای JS
-  (باندل همیشه سر مرز دستور تمام می‌شود، پس ختم‌شدن به `,` یعنی بریده)، و طول
-  ثبت‌شده در هدر برای WEBP/WOFF2 و تریلر `IEND` برای PNG.
-- **URL با یک اسلش** — source mapها ورودی‌های `sources` را به شکل
-  `https:/framerusercontent.com/…` می‌نویسند. چند ماژول فقط به همین شکل نام
-  برده شده بودند، پس این املا هم شناسایی و ترمیم می‌شود.
-
-### اجرای دوباره
-
-```bash
-python3 tools/mirror.py             # ادامه از جایی که مانده (از روی دیسک)
-python3 tools/mirror.py --rewrite   # فقط بازنویسی مسیرها، از روی نسخه‌ی اصلی
-python3 tools/extract_sources.py    # استخراج دوباره‌ی سورس‌ها
-```
-
-بازنویسی همیشه از روی `.mirror/original/` انجام می‌شود، پس اجرای چندباره‌اش
-مشکلی ایجاد نمی‌کند.
-
-## چیزهایی که عمداً دانلود نشدند
-
-اینها اسکریپت‌های شخص ثالث‌اند و برای ظاهر یا کارکرد سایت لازم نیستند. تگ‌هایشان
-در HTML دست‌نخورده باقی مانده؛ آفلاین بی‌صدا شکست می‌خورند و مشکلی ایجاد
-نمی‌کنند. اگر نمی‌خواهی‌شان، از `site/index.html` حذفشان کن:
-
-- `events.framer.com/script?v=2` — آنالیتیکس Framer
-- `www.clarity.ms/tag/su60auemtq` — Microsoft Clarity
-- `static.openreplay.com/latest/openreplay.js` — OpenReplay (ضبط جلسه). این یکی
-  از یک اسنیپت inline در انتهای `<body>` تزریق می‌شود، نه از تگ `<script src>`.
-- `framer.com/edit/init.mjs` — نوار ویرایش Framer (فقط وقتی یک کلید
-  در `localStorage` ست شده باشد بارگذاری می‌شود)
-
-## ۱۲ فایلی که وجود ندارند
-
-`manifest.json` دوازده مورد ناموفق دارد، همه از یک جنس: مسیرهایی مثل
-`sites/<id>/tslib.es6.js.map` یا `sites/<id>/Ticker.map`.
-
-اینها ارجاع واقعی نیستند. کامنت `//# sourceMappingURL=Ticker.map` داخل یک
-کتابخانه‌ی وندورشده باقی مانده و نسبت به مسیر باندل حل می‌شود، در حالی که فایل
-واقعی جای دیگری است (`modules/B2xAl…/Ticker.map` که **دانلود شده**). خودِ origin
-هم تأیید می‌کند: برای این مسیرها `403 AccessDenied` برمی‌گرداند، که پاسخ S3 برای
-کلید ناموجود است. هیچ‌کدام برای اجرای سایت لازم نیستند.
-
-## نکته‌ی مهم درباره‌ی ادامه‌ی توسعه
-
-این خروجی **بیلد** سایت است، نه پروژه‌ی Framer. یعنی:
-
-- HTML و CSS کاملاً قابل ویرایش‌اند (همه‌ی استایل‌ها inline داخل `index.html`
-  هستند، فایل CSS جداگانه‌ای وجود ندارد).
-- تصاویر و فونت‌ها همه محلی‌اند و مستقیماً قابل جایگزینی‌اند.
-- کد JS بیلدشده و minify شده است، **اما** دو چیز خواندنی هم داریم:
-
-  1. `site/_cdn/framerusercontent.com/modules/` — ماژول‌های کامپوننتی خودِ
-     Framer، تقریباً بدون minify، با `import … from "framer"` و JSX. مثلاً
-     `…/zrZCN0orK.js` کامپوننت صفحه‌ی اصلی است (`zrZCN0orK` همان route id
-     مسیر `/` است). این فایل‌ها را سایت منتشرشده لود نمی‌کند — باندل‌های
-     `sites/<id>/*.mjs` را لود می‌کند — ولی برای فهمیدن ساختار بهترین منبع‌اند.
-  2. `sources/` — سورس واقعی کد کامپوننت‌های سفارشی، از روی source map:
-     `LenisScroll.tsx`، `Ticker.tsx`، `Scrollbar_disable.tsx` با تایپ‌ها و
-     `addPropertyControls` کامل.
-
-اگر می‌خواهی روی خودِ محتوا و ظاهر کار کنی، ویرایش `site/index.html` کاملاً
-جواب می‌دهد (همه‌ی استایل‌ها همان‌جا inline هستند). اگر می‌خواهی معماری را
-بازسازی کنی، از `sources/` و شاخه‌ی `modules/` شروع کن.
-
-## چه چیزی تأیید شده
-
-سایت محلی روی `tools/serve.py` بالا آمد و در مرورگر بررسی شد:
-
-- هر دو مسیر (`/` و `/404`) رندر می‌شوند
-- hydration کار می‌کند — hero بعد از اجرای ماژول صفحه ظاهر می‌شود
-- هیچ تصویر شکسته‌ای نیست، هیچ درخواست ناموفقی به asset نیست
-- تنها خطای کنسول از OpenReplay است که می‌گوید روی localhost بدون SSL کار
-  نمی‌کند؛ ربطی به سایت ندارد
-- هر ۳۳ فایل JS از بررسی کامل‌بودن رد شدند
+For how the mirror was produced, what it verifies, and the known gaps, see
+[docs/MIRROR.md](docs/MIRROR.md).
