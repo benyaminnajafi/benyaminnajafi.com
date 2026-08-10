@@ -11,7 +11,7 @@ discarded.
 
 So this appends real records to the payload instead. Each record carries the
 title, a richtext body, the role / expertise / industry pairs, the six carousel
-images, and the section colours.
+images, and the six slide background colours.
 
 Idempotent: records are keyed by `id`, and an existing one with the same id is
 replaced rather than duplicated. Re-run after `mirror.py --rewrite`, which
@@ -33,8 +33,14 @@ PAGE = os.path.join(ROOT, "site", "index.html")
 IMG_DIR = "_cdn/framerusercontent.com/images"
 
 # The record we clone field-for-field. Anything not overridden below keeps the
-# donor's value, which is how the colours, enums and spacing stay consistent.
+# donor's value, which is how the enums and spacing stay consistent.
 DONOR = 0
+
+
+def rgb(hex_color: str) -> str:
+    """`#1c54d6` → `rgb(28, 84, 214)`, the shape Framer writes colour fields in."""
+    h = hex_color.lstrip("#")
+    return "rgb(%d, %d, %d)" % tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
 
 
 def rich(paragraphs: list[str], bullets: list[tuple[str, str]]) -> str:
@@ -68,6 +74,10 @@ CASES = [
         # Slot order is the carousel order; slot 1 is the frame shown at rest.
         "images": ["revaalShot1Kv3", "revaalShot2Kv3", "revaalShot3Kv3",
                    "revaalShot4Kv3", "revaalShot5Kv3", "revaalShot1Kv3"],
+        # The slide sits behind the screenshot, so it has to be the screenshot's
+        # own backdrop — otherwise it flashes a different colour before the image
+        # paints, and shows through wherever the image has not loaded.
+        "color": "#1c54d6",
         "body": rich(
             [
                 "Revaal puts AI agents on a canvas a content team can see, wire, run and "
@@ -98,6 +108,7 @@ CASES = [
         "link": "https://benan.app/",
         "images": ["benanShot1Kv3", "benanShot2Kv3", "benanShot3Kv3",
                    "benanShot1Kv3", "benanShot2Kv3", "benanShot3Kv3"],
+        "color": "#e3a059",
         "body": rich(
             [
                 "Benan is a Persian, right-to-left investment assistant you talk to: tap the "
@@ -130,6 +141,8 @@ FIXES = {
     "bnVQcA4Jz": {F_LABEL: "See how we scaled", F_LINK_LABEL: " Read case study ⤴︎ "},
 }
 F_IMAGES = ["kELz1ETD1", "Ad6s1AoR8", "fKp164tJa", "j6Hv1l21u", "fJ8vgAFmQ", "aw2IwBwCX"]
+# "BG Color 01".."06" on the card — one per image slot, in the same order.
+F_COLORS = ["sHblk1LhN", "pm5lqVub7", "ly1yPFttY", "AdldRwrka", "xvEJJaLdL", "cXkAFUH3q"]
 
 
 # Plain text swaps. The "Updated" line is not a CMS field — it is hardcoded in the
@@ -218,6 +231,8 @@ def main() -> None:
         rec[F_LINK] = typed("link", case["link"])
         for field, slug in zip(F_IMAGES, case["images"]):
             rec[field] = image(slug)
+        for field in F_COLORS:
+            rec[field] = typed("color", rgb(case["color"]))
         rec[F_ID] = typed("string", case["id"])
         added.append(put(rec))
 
