@@ -12,6 +12,41 @@ cross-functional teams to deliver measurable business outcomes.
 ---
 
 ## Selected case studies
+### From Source to Publish on One Canvas: Designing an Agentic Workflow Product
+
+*Founding Product Designer · 0→1 & Agentic Workflow Design · AI Tooling (Editorial)*
+
+From source to publish: **[revaal.app ⤴](https://revaal.app/)**
+
+<img src="site/_cdn/framerusercontent.com/images/revaalShot1Kv3__scale-down-to-1024-width-1920-height-1440.png" width="520" alt="Revaal — connect a source, arrange the steps, publish, all on one canvas">
+
+Revaal puts AI agents on a canvas a content team can see, wire, run and audit — connect a
+source, arrange the steps, let the last step publish, no code.
+
+- **Designed for the constraint** — Iranian sources read from inside, models called from
+  outside, settlement in Toman: all three in the architecture, not a workaround.
+- **Made trust a feature** — per-node token and cost accounting, an append-only audit log,
+  a separate permission grant per tool.
+- **Proved it on real work** — 119 sources across 16 beats, crawled, clustered and drafted
+  daily for a financial news desk.
+
+### Five Specialists Behind One Conversation: A Voice-First Investment Assistant
+
+*Founding Product Designer · 0→1 & Conversational Design · Fintech (AI Assistant)*
+
+Talk to the assistant: **[benan.app ⤴](https://benan.app/)**
+
+<img src="site/_cdn/framerusercontent.com/images/benanShot1Kv3__scale-down-to-1024-width-1920-height-1440.png" width="520" alt="Benan landing page — a Persian voice and text investment assistant">
+
+Benan is a Persian, right-to-left investment assistant you talk to: tap the orb and a voice
+agent answers out loud, or type and the same assistant replies in the chat bar.
+
+- **Framed it around five specialties** — market analysis, live prices, news, tax, financial
+  health — with the assistant routing between them rather than the user picking a tool.
+- **Made voice the primary surface** — the orb is the main action on screen; the typed chat
+  bar sits under it.
+- **Kept the secret off the client** — the backend mints a short-lived signed URL per session,
+  so the API key never reaches the browser.
 
 ### Scaling to 4.5M Users: A Data-Driven Platform Redesign
 
