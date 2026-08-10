@@ -1,0 +1,68 @@
+{
+  "payloadEntries": 779,
+  "records": 7,
+  "cases": [
+    {
+      "file": "content/case-studies/010-from-source-to-publish-on-one-canvas.md",
+      "title": "From Source to Publish on One Canvas: Designing an Agentic Workflow Product",
+      "images": 5,
+      "bodyChars": 571,
+      "hasLink": true
+    },
+    {
+      "file": "content/case-studies/020-five-specialists-behind-one-conversation.md",
+      "title": "Five Specialists Behind One Conversation: A Voice-First Investment Assistant",
+      "images": 3,
+      "bodyChars": 596,
+      "hasLink": true
+    },
+    {
+      "file": "content/case-studies/030-scaling-to-4-5m-users.md",
+      "title": "Scaling to 4.5M Users: A Data-Driven Platform Redesign",
+      "images": 6,
+      "bodyChars": 469,
+      "hasLink": true
+    },
+    {
+      "file": "content/case-studies/040-redefining-grocery-discovery.md",
+      "title": "Redefining Grocery Discovery: The Shift to a Vendor-Less Shopping Architecture",
+      "images": 6,
+      "bodyChars": 683,
+      "hasLink": true
+    },
+    {
+      "file": "content/case-studies/050-orchestrating-delivery-at-scale.md",
+      "title": "Orchestrating Delivery at Scale: A Complete Upgrade of a National Fintech Platform",
+      "images": 4,
+      "bodyChars": 441,
+      "hasLink": true
+    },
+    {
+      "file": "content/case-studies/060-modernization-without-disruption.md",
+      "title": "Modernization Without Disruption: Rolling Out a Design System on a Live Operation",
+      "images": 6,
+      "bodyChars": 857,
+      "hasLink": true
+    },
+    {
+      "file": "content/case-studies/070-founding-a-fintech.md",
+      "title": "Founding a Fintech: From Rapid Ideation to Market Launch",
+      "images": 6,
+      "bodyChars": 679,
+      "hasLink": true
+    }
+  ],
+  "ignored": [],
+  "profile": {
+    "name": true,
+    "jobTitle": true,
+    "bio": true,
+    "email": true,
+    "phone": true,
+    "linkedin": true,
+    "cvUrl": true,
+    "updated": true,
+    "aiPromptEngines": true,
+    "footer": true
+  }
+}

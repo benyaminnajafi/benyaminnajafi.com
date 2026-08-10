@@ -1,0 +1,352 @@
+Benyamin Najafi
+Senior Product Designer
+
+10+ years of experience leading design teams to build scalable products, from 0→1 startups to market-leading platforms. I drive product discovery and align cross-functional teams to deliver measurable business outcomes.
+
+ben.najafi@gmail.com
+
+0933 898 2839
+
+LinkedIn
+
+CV
+
+Selected Case Studies
+
+Updated: August 10, 2026
+
+From Source to Publish on One Canvas: Designing an Agentic Workflow Product
+
+Revaal puts AI agents on a canvas a content team can see, wire, run and audit — connect a source, arrange the steps, let the last step publish, no code.
+
+
+
+Designed for the constraint: Iranian sources read from inside, models called from outside, settlement in Toman: all three in the architecture, not a workaround.
+
+
+
+Made trust a feature: per-node token and cost accounting, an append-only audit log, a separate permission grant per tool.
+
+
+
+Proved it on real work: 119 sources across 16 beats, crawled, clustered and drafted daily for a financial news desk.
+
+
+
+Role
+
+: 
+
+Founding Product Designer
+
+Expertise
+
+: 
+
+0→1 & Agentic Workflow Design
+
+Industry
+
+: 
+
+AI Tooling (Editorial)
+
+ 
+
+From source to publish
+
+: 
+
+ Visit revaal.app ⤴︎ 
+
+Click or Drag
+
+Click or Drag
+
+Click or Drag
+
+Five Specialists Behind One Conversation: A Voice-First Investment Assistant
+
+Benan is a Persian, right-to-left investment assistant you talk to: tap the orb and a voice agent answers out loud, or type and the same assistant replies in the chat bar.
+
+
+
+Framed it around five specialties: market analysis, live prices, news, tax, financial health — with the assistant routing between them rather than the user picking a tool.
+
+
+
+Made voice the primary surface: the orb is the main action on screen; the typed chat bar sits under it.
+
+
+
+Kept the secret off the client: the backend mints a short-lived signed URL per session, so the API key never reaches the browser.
+
+
+
+Role
+
+: 
+
+Founding Product Designer
+
+Expertise
+
+: 
+
+0→1 & Conversational Design
+
+Industry
+
+: 
+
+Fintech (AI Assistant)
+
+ 
+
+Talk to the assistant
+
+: 
+
+ Visit benan.app ⤴︎ 
+
+Click or Drag
+
+Click or Drag
+
+Click or Drag
+
+Scaling to 4.5M Users: A Data-Driven Platform Redesign
+
+Spearheaded a complete platform redesign by establishing a robust, scalable design system to ensure long-term consistency.
+
+
+
+Leadership: Led a team of 7 to iterate and enhance the core product experience.
+
+
+
+Continuous Discovery: Targeted user needs by blending qualitative insights with quantitative data (Heap, Clarity, PostHog, Metabase).
+
+
+
+Massive Impact: Fueled hyper-growth by scaling the platform's user base from 700,000 to over 4.5 million.
+
+
+
+Role
+
+: 
+
+Product Design Manager
+
+Expertise
+
+: 
+
+Product Strategy
+
+Industry
+
+: 
+
+Crypto & Investment
+
+ 
+
+See how we scaled
+
+: 
+
+ Read case study ⤴︎ 
+
+Click or Drag
+
+Click or Drag
+
+Click or Drag
+
+Redefining Grocery Discovery: The Shift to a Vendor-Less Shopping Architecture
+
+I led the transition from a restrictive vendor-first model to a unified "Product-Based" experience by analyzing quantitative funnels (Metabase) and qualitative behaviors (Hotjar session recordings and usability tests).
+
+To reduce interaction cost, I completely redesigned the core purchase flow. This iterative, data-driven strategy drastically shortened the user journey and decision time.
+
+
+
+Successfully shifted user behavior by prioritizing product discovery over store selection;
+
+
+
+Scaled the feature from an experimental MVP to a core flow, increasing search-to-cart conversion;
+
+
+
+Established a robust foundation for a vendor-less shopping architecture across the platform.
+
+Role
+
+: 
+
+Product Designer
+
+Expertise
+
+: 
+
+Flow & Research
+
+Industry
+
+: 
+
+FMCG (Grocery)
+
+ 
+
+Flow Experimentation
+
+: 
+
+ Read case study ⤴︎ 
+
+Click or Drag
+
+Click or Drag
+
+Click or Drag
+
+Orchestrating Delivery at Scale: A Complete Upgrade of a National Fintech Platform
+
+To ensure seamless delivery from design to deployment, I managed the entire product development process end-to-end. 
+
+My responsibilities included handing over finalized designs to infrastructure, backend, frontend, and QA teams, as well as supervising the planning, testing, and release phases.
+
+By overseeing the full workflow, I ensured execution was efficient, high-quality, and fully aligned with both user needs and business objectives.
+
+Role
+
+: 
+
+Product Design Manager
+
+Expertise
+
+: 
+
+Shipping & Delivery
+
+Industry
+
+: 
+
+Fintech
+
+ 
+
+Leading product delivery
+
+: 
+
+ Read case study ⤴︎ 
+
+Click or Drag
+
+Click or Drag
+
+Click or Drag
+
+Modernization Without Disruption: Rolling Out a Design System on a Live Operation
+
+I led as Product Design Lead with a dual mandate: build the team and modernize the product without disrupting a live operation. I assembled the product design team end-to-end defining roles, hiring and onboarding, and setting rituals (crits, design reviews, async specs) that tightened our collaboration with Product & Engineering.
+
+In parallel, I architected a new design system (tokens, components, accessibility, content guidelines) with clear governance and versioning, enabling consistent, scalable UI across surfaces.
+
+To de-risk change, I audited and documented every current-state flow, clarified ownership, and established canonical user journeys. I then planned and managed a phased migration to the new system rollouts, compatibility tracking, and team training so we could evolve the experience step by step while maintaining service continuity.
+
+Role
+
+: 
+
+Product Designer Lead
+
+Expertise
+
+: 
+
+Design System & Flow
+
+Industry
+
+: 
+
+Retail
+
+ 
+
+ Read case study ⤴︎ 
+
+Click or Drag
+
+Click or Drag
+
+Click or Drag
+
+Founding a Fintech: From Rapid Ideation to Market Launch
+
+Spearheaded the zero-to-one product and service design for a novel melted gold trading and storage platform, tasked with navigating established market limitations and shaping a strong Go-To-Market (GTM) strategy:
+
+
+
+Accelerated Product Delivery: Partnered cross-functionally with two 10x engineers, rapid ideation, swift decision-making & seamless implementation;
+
+
+
+Strategic Market Positioning: Conducted comprehensive UX audits of all competitors to analyze qualitative and quantitative market realities;
+
+
+
+Scaled Team Infrastructure: Recruited and onboarded the foundational product and engineering team, including Senior Product Designers and Frontend Developers.
+
+Role
+
+: 
+
+Founding Product Designer
+
+Expertise
+
+: 
+
+MVP Design & Planning
+
+Industry
+
+: 
+
+Fintech (Investment)
+
+ 
+
+Building the 0 → 1 foundation
+
+: 
+
+ Read case study ⤴︎ 
+
+Click or Drag
+
+Click or Drag
+
+Click or Drag
+
+Back to Top
+
+Get an AI summary of me:
+
+Gemini
+
+ChatGPT
+
+Perplexity
+
+© Benyamin Najafi, 2026
