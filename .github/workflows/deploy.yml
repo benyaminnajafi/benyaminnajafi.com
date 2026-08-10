@@ -1,0 +1,40 @@
+# GitHub Pages فقط می‌تواند از ریشه‌ی ریپو یا از docs/ دیپلوی کند، و سایت ما در
+# site/ است. پس به‌جای جابه‌جا کردن پوشه (که tools/serve.py را می‌شکند)، همین‌جا
+# فقط site/ را به‌عنوان artifact آپلود می‌کنیم.
+name: Deploy site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# اگر چند push پشت سر هم بیاید، دیپلوی در حال اجرا را نصفه نمی‌کنیم.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

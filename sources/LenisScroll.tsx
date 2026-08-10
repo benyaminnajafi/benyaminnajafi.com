@@ -1,0 +1,196 @@
+import * as React from "react"
+import { useEffect, useRef, useLayoutEffect } from "react"
+import { addPropertyControls, ControlType } from "framer"
+import Lenis from "@studio-freight/lenis"
+
+type Props = {
+    wrapper: boolean
+    smooth: boolean
+    intensity: number
+    infiniteScroll: boolean
+    touchMultiplier: number
+    children?: React.ReactNode
+}
+/**
+ * @framerDisableUnlink
+ */
+export function LenisUnifiedScroll({
+    wrapper,
+    smooth,
+    intensity,
+    infiniteScroll,
+    touchMultiplier,
+    children,
+}: Props) {
+    const lenisRef = useRef<Lenis | null>(null)
+    const wrapperRef = useRef<HTMLDivElement>(null)
+    const contentRef = useRef<HTMLDivElement>(null)
+
+    // Clone children with enforced styles (for wrapper mode)
+    const styledChildren = React.Children.map(children, (child) => {
+        if (React.isValidElement(child)) {
+            return React.cloneElement(child, {
+                ...child.props,
+                style: {
+                    width: "100%",
+                    boxSizing: "border-box",
+                    ...child.props.style,
+                },
+            })
+        }
+        return child
+    })
+
+    useLayoutEffect(() => {
+        if (wrapper && contentRef.current) {
+            contentRef.current.style.width = "100%"
+            contentRef.current.style.display = "block"
+            contentRef.current.style.boxSizing = "border-box"
+        }
+    }, [children, wrapper])
+
+    useEffect(() => {
+        if (!smooth) return
+
+        if ("scrollRestoration" in history) {
+            history.scrollRestoration = "manual"
+        }
+
+        const lenis = new Lenis({
+            wrapper: wrapper ? wrapperRef.current! : undefined,
+            content: wrapper ? contentRef.current! : undefined,
+            duration: intensity / 10,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smoothWheel: true,
+            smoothTouch: true,
+            touchMultiplier,
+            infinite: infiniteScroll,
+        })
+
+        lenisRef.current = lenis
+        if (!wrapper) {
+            lenis.scrollTo(0, { immediate: true })
+        }
+
+        let frame = requestAnimationFrame(function raf(time) {
+            lenis.raf(time)
+            frame = requestAnimationFrame(raf)
+        })
+
+        return () => {
+            cancelAnimationFrame(frame)
+            lenis.destroy()
+            if ("scrollRestoration" in history) {
+                history.scrollRestoration = "auto"
+            }
+        }
+    }, [wrapper, smooth, intensity, infiniteScroll, touchMultiplier])
+
+    if (!wrapper) {
+        return <div style={{ display: "none" }} />
+    }
+
+    return (
+        <>
+            <style>{`
+                .lenis-content,
+                .lenis-content > .children-wrapper {
+                    width: 100% !important;
+                    box-sizing: border-box !important;
+                }
+                .lenis-content > .children-wrapper > * {
+                    width: 100% !important;
+                    box-sizing: border-box !important;
+                }
+                .children-wrapper {
+                    opacity: 1 !important;
+                }
+            `}</style>
+            <div
+                ref={wrapperRef}
+                className="lenis"
+                style={{
+                    height: "100%",
+                    width: "100%",
+                    overflow: "hidden",
+                    position: "relative",
+                }}
+            >
+                <div
+                    ref={contentRef}
+                    className="lenis-content"
+                    style={{
+                        minHeight: "100%",
+                        willChange: "transform",
+                        transform: "translateZ(0)",
+                        width: "100%",
+                        height: "auto",
+                        display: "block",
+                        boxSizing: "border-box",
+                    }}
+                >
+                    <div
+                        className="children-wrapper"
+                        style={{
+                            width: "100%",
+                            minHeight: "100%",
+                            display: "block",
+                            boxSizing: "border-box",
+                        }}
+                    >
+                        {styledChildren}
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+LenisUnifiedScroll.defaultProps = {
+    wrapper: false,
+    smooth: true,
+    intensity: 12,
+    infiniteScroll: false,
+    touchMultiplier: 1,
+}
+
+LenisUnifiedScroll.displayName = "Lenis Scroll"
+
+addPropertyControls(LenisUnifiedScroll, {
+    smooth: {
+        type: ControlType.Boolean,
+        title: "Smooth",
+        defaultValue: true,
+    },
+    intensity: {
+        type: ControlType.Number,
+        title: "Intensity",
+        defaultValue: 12,
+        min: 1,
+        max: 100,
+        step: 1,
+        hidden: (props) => !props.smooth,
+    },
+    infiniteScroll: {
+        type: ControlType.Boolean,
+        title: "Infinite",
+        description: "The first and last screens must be the same.",
+        defaultValue: false,
+        hidden: (props) => !props.smooth,
+    },
+    wrapper: {
+        type: ControlType.Boolean,
+        title: "Wrapper",
+        description:
+            "Use a wrapper to limit Lenis to an element and ensure infinite scroll works properly on touch devices.",
+        defaultValue: false,
+        hidden: (props) => !props.smooth,
+    },
+    children: {
+        type: ControlType.ComponentInstance,
+        title: "Content",
+        description:
+            "Choose what you want to use as the content of the wrapper.",
+        hidden: (props) => !props.wrapper,
+    },
+})

@@ -1,0 +1,16 @@
+# ابزار gstack
+.gstack/
+
+# لاگ و فایل‌های موقت کراول.
+# manifest.json و original/ عمداً کامیت می‌شوند — `mirror.py --rewrite`
+# بازنویسی را همیشه از روی original/ انجام می‌دهد و بدونش کار نمی‌کند.
+.mirror/*.log
+.mirror/*.out
+.mirror/*.bin
+
+# پایتون
+__pycache__/
+*.py[cod]
+
+# macOS
+.DS_Store
