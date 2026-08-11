@@ -7,7 +7,7 @@ industry: "Crypto & Investment"
 caption: "See how we scaled"
 linkLabel: "Read case study ⤴︎"
 linkUrl: "https://docs.google.com/document/d/1UYU7kAC9iOrH96dMo6OguTkoNweBBi25XajfylpM3dY/edit?usp=sharing"
-accent: "#ffd96f"
+accent: "#ffde88"
 framerId: "bnVQcA4Jz"
 images:
   - "../../src/assets/case-studies/scaling-to-4-5m-users/01.png"

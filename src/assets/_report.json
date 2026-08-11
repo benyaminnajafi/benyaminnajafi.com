@@ -39,11 +39,11 @@
     "portrait.jpeg"
   ],
   "fonts": [
-    "manrope-400.woff2",
     "manrope-500.woff2",
+    "manrope-800.woff2",
     "manrope-600.woff2",
     "manrope-700.woff2",
-    "manrope-800.woff2"
+    "manrope-variable.woff2"
   ],
   "skipped": {},
   "summary": {

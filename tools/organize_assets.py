@@ -34,15 +34,42 @@ SITE = os.path.join(ROOT, "site")
 CONTENT = os.path.join(ROOT, "content", "case-studies")
 ASSETS = os.path.join(ROOT, "src", "assets")
 
-# The five files the browser requests, with the weight each @font-face declares.
-# Everything else under site/_cdn is dead weight.
-FONTS = {
-    "K4ZMLVLHYIFVTTTWGVOTVGOFUUX7NVGI.woff2": "manrope-400.woff2",
-    "xn7_YHE41ni1AdIRqAuZuw1Bx9mbZk7PFN_C-bk.woff2": "manrope-500.woff2",
-    "6P4FPMFQH7CCC7RZ4UU4NKSGJ2RLF7V5.woff2": "manrope-600.woff2",
-    "DEPNXL2T77QGX4DXZAN3G53TXHO2JEFP.woff2": "manrope-700.woff2",
-    "JNU3GNMUBPWW6V6JTED3S27XL5HN7NM5.woff2": "manrope-800.woff2",
-}
+# The five files the browser actually requests, measured from the network log.
+# Everything else under site/_cdn is dead weight: 47 more woff2 whose @font-face
+# rules are gated by unicode-range for scripts this page never renders.
+LIVE_FONTS = [
+    "K4ZMLVLHYIFVTTTWGVOTVGOFUUX7NVGI.woff2",
+    "xn7_YHE41ni1AdIRqAuZuw1Bx9mbZk7PFN_C-bk.woff2",
+    "6P4FPMFQH7CCC7RZ4UU4NKSGJ2RLF7V5.woff2",
+    "DEPNXL2T77QGX4DXZAN3G53TXHO2JEFP.woff2",
+    "JNU3GNMUBPWW6V6JTED3S27XL5HN7NM5.woff2",
+]
+
+
+def font_names(page: str) -> dict:
+    """Name each live font from its own @font-face rule, never by hand.
+
+    These filenames are opaque hashes. Assigning weights to them by eye gets it
+    wrong — a first pass here mislabelled four of the five, which would have
+    shipped every heading at the wrong weight while still looking like Manrope.
+    """
+    names = {}
+    for face in re.findall(r"@font-face\s*\{([^}]*)\}", page):
+        for filename in LIVE_FONTS:
+            if filename not in face:
+                continue
+            family = re.search(r"font-family:\s*['\"]?([^;'\"]+)", face)
+            weight = re.search(r"font-weight:\s*(\d+)", face)
+            if not family or not weight:
+                raise SystemExit(f"@font-face for {filename} has no family or weight")
+            stem = family.group(1).strip().lower().replace(" ", "-")
+            # One file covers the whole range; its declared 400 is not a weight.
+            names[filename] = (f"{stem}.woff2" if "variable" in stem
+                               else f"{stem}-{weight.group(1)}.woff2")
+    missing = [f for f in LIVE_FONTS if f not in names]
+    if missing:
+        raise SystemExit(f"no @font-face rule found for: {', '.join(missing)}")
+    return names
 
 
 def slug_of(filename: str) -> str:
@@ -59,6 +86,7 @@ def find(name: str) -> str | None:
 def main() -> None:
     report: dict = {"images": [], "fonts": [], "skipped": {}}
     kept_bytes = 0
+    page = open(os.path.join(SITE, "index.html"), encoding="utf-8").read()
 
     # --- images -----------------------------------------------------------
     for filename in sorted(os.listdir(CONTENT)):
@@ -91,7 +119,6 @@ def main() -> None:
     # master, and bound the pattern: a srcset holds several comma-separated URLs
     # inside one attribute, so anything greedy up to the closing quote swallows
     # the lot and yields a filename that cannot exist.
-    page = open(os.path.join(SITE, "index.html"), encoding="utf-8").read()
     portrait = re.search(r"images/([A-Za-z0-9]+__width-\d+-height-\d+\.jpe?g)", page)
     if not portrait:
         raise SystemExit("portrait not found in site/index.html — pattern is stale")
@@ -104,7 +131,7 @@ def main() -> None:
 
     # --- fonts ------------------------------------------------------------
     os.makedirs(os.path.join(ASSETS, "fonts"), exist_ok=True)
-    for original, friendly in FONTS.items():
+    for original, friendly in font_names(page).items():
         found = find(original)
         if not found:
             report["skipped"].setdefault("missingFont", []).append(original)

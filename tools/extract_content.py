@@ -52,6 +52,24 @@ IMAGE_FIELDS = ["kELz1ETD1", "Ad6s1AoR8", "fKp164tJa", "j6Hv1l21u", "fJ8vgAFmQ",
 COLOR_FIELDS = ["sHblk1LhN", "pm5lqVub7", "ly1yPFttY", "AdldRwrka", "xvEJJaLdL", "cXkAFUH3q"]
 
 
+def token_table(html: str) -> dict:
+    """The real value of every design token, from the `body { … }` block.
+
+    Framer also writes each token inline as `var(--token-x, <fallback>)`, but
+    those fallbacks are frozen at an older palette and are wrong — the slide
+    backdrop reads `rgb(255,217,111)` inline where the token is `#ffde88`. The
+    fallback never takes effect in the browser, because the token is always
+    defined; it only misleads whoever reads the HTML.
+    """
+    m = re.search(r"body\{([^}]*--token-[^}]*)\}", html)
+    if not m:
+        sys.exit("token declarations not found — the CSS shape changed")
+    return {
+        name: value.strip()
+        for name, value in re.findall(r"(--token-[0-9a-f-]+)\s*:\s*([^;}]+)", m.group(1))
+    }
+
+
 def load_payload() -> list:
     html = open(PAGE, encoding="utf-8").read()
     m = re.search(r'id="__framer__handoverData">(.*?)</script>', html, re.S)
@@ -159,6 +177,7 @@ def extract_profile(html: str) -> dict:
 
 def main() -> None:
     d, html = load_payload()
+    tokens = token_table(html)
     records = d[3]
     os.makedirs(os.path.join(OUT, "case-studies"), exist_ok=True)
 
@@ -190,13 +209,18 @@ def main() -> None:
                 if master not in images:
                     images.append(master)
 
-        # Colours arrive as `var(--token-<uuid>, rgb(r, g, b))`. The token name is a
-        # Framer id that means nothing outside Framer, so keep the literal colour.
+        # Colours arrive as `var(--token-<uuid>, <stale fallback>)`. Resolve the
+        # token against its real declaration; never read the fallback.
         colors = []
         for f in COLOR_FIELDS:
             val = unwrap(d, rec.get(f))
             if not isinstance(val, str) or not val:
                 continue
+            ref = re.search(r"(--token-[0-9a-f-]+)", val)
+            if ref:
+                if ref.group(1) not in tokens:
+                    sys.exit(f"unknown token {ref.group(1)} on record {order}")
+                val = tokens[ref.group(1)]
             m = re.search(r"rgba?\(([\d.,\s]+)\)", val)
             if m:
                 parts = [int(float(x)) for x in m.group(1).split(",")[:3]]

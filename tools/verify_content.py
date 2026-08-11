@@ -76,6 +76,28 @@ def main() -> None:
         sys.exit("no .baseline/text.txt — capture the baseline first")
     haystack = normalize(open(BASELINE, encoding="utf-8").read())
 
+    page = open(os.path.join(SITE, "index.html"), encoding="utf-8").read()
+    block = re.search(r"body\{([^}]*--token-[^}]*)\}", page)
+    declared_colors = set(
+        re.findall(r"#[0-9a-f]{6}", block.group(1)) if block else []
+    )
+    check(len(declared_colors) >= 10, "could not read the token declarations")
+
+    # Every `var(--token-x, <fallback>)` in this page carries a fallback frozen at
+    # an older palette. The browser never uses them, but anyone reading the HTML
+    # will. Collect the ones that differ from their token so the accents can be
+    # checked against a real blacklist rather than an allowlist — records we
+    # injected ourselves carry a literal colour and no token at all.
+    stale_fallbacks = set()
+    for token, fallback in re.findall(r"var\((--token-[0-9a-f-]+),\s*([^)]+\)?)\)", page):
+        m = re.search(r"rgba?\(([\d.,\s]+)\)", fallback)
+        if not m:
+            continue
+        parts = [int(float(x)) for x in m.group(1).split(",")[:3]]
+        as_hex = "#%02x%02x%02x" % tuple(parts)
+        if as_hex not in declared_colors:
+            stale_fallbacks.add(as_hex)
+
     files = sorted(
         os.path.join(CONTENT, "case-studies", f)
         for f in os.listdir(os.path.join(CONTENT, "case-studies")) if f.endswith(".md")
@@ -107,8 +129,14 @@ def main() -> None:
 
         check(meta.get("linkUrl", "").startswith("http"),
               f"{name}: linkUrl is not absolute: {meta.get('linkUrl')!r}")
-        check(re.fullmatch(r"#[0-9a-f]{6}", meta.get("accent", "")) is not None,
-              f"{name}: accent is not a hex colour: {meta.get('accent')!r}")
+        accent = meta.get("accent", "")
+        check(re.fullmatch(r"#[0-9a-f]{6}", accent) is not None,
+              f"{name}: accent is not a hex colour: {accent!r}")
+        # The accent must not be one of those stale fallbacks: the yellow slide
+        # reads `rgb(255,217,111)` inline where its token is `#ffde88`, and taking
+        # the inline value silently ships the wrong colour.
+        check(accent not in stale_fallbacks,
+              f"{name}: accent {accent} is a stale var() fallback, not the real token")
 
         images = meta.get("images", [])
         check(len(images) >= 1, f"{name}: no images")
