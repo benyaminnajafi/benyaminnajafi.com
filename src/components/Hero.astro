@@ -41,16 +41,29 @@ import ThemeToggle from "./ThemeToggle.astro";
    * and the same 37.5 / 62.5 split the case study rows use. */
   .hero {
     display: grid;
-    grid-template-columns: 37.5% 1fr;
+    /* Framer sizes these with flex 1.2 and 2, which at 1440 gives
+     * exactly 522 and 870 either side of the 16px gap. */
+    grid-template-columns: 1.2fr 2fr;
     gap: 16px;
     padding-block: 24px 16px;
   }
 
+  /* Name and job title share one width: whichever of the two is wider sets it,
+   * and the other stretches to match. max-content on the column does that. */
   .identity {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    align-items: stretch;
+    /* The block is only as wide as its widest line — the job title — and both
+     * lines then fill it. Stretching to the grid column instead would make the
+     * name a 522px box holding a 219px word. */
+    width: max-content;
+    max-width: 100%;
   }
+  /* The block is as wide as its widest line and both lines fill it, which is
+   * what the original does — name and job title share one measured width. */
+
 
   .name-row {
     display: flex;
@@ -74,6 +87,12 @@ import ThemeToggle from "./ThemeToggle.astro";
     display: flex;
     flex-direction: column;
     gap: 16px;
+  }
+
+  /* The bio is capped rather than filling its column — measured off the
+   * original, where the paragraph sits in a 560px box inside a 654px one. */
+  .t-bio {
+    max-width: 560px;
   }
 
   .contacts {

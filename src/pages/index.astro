@@ -15,7 +15,7 @@ const cases = (await getCollection("caseStudies")).sort(
 
   <section id="case-studies" aria-labelledby="case-studies-title">
     <div class="section-head">
-      <h2 id="case-studies-title" class="t-meta">Selected Case Studies</h2>
+      <h2 id="case-studies-title"><a class="t-meta" href="#case-studies">Selected Case Studies</a></h2>
       <p class="t-meta">Updated: {profile.updated}</p>
     </div>
 
@@ -39,9 +39,25 @@ const cases = (await getCollection("caseStudies")).sort(
 </BaseLayout>
 
 <style>
+  .section-head h2 {
+    margin: 0;
+    font: inherit;
+  }
+  /* Both of these size to their text in the original, not to the column. */
+  .section-head a {
+    display: inline;
+  }
+  /* Sizes to its text, not to the column it sits in. */
+  .section-head p {
+    width: max-content;
+    max-width: 100%;
+  }
+
   .section-head {
     display: grid;
-    grid-template-columns: 37.5% 1fr;
+    /* Framer sizes these with flex 1.2 and 2, which at 1440 gives
+     * exactly 522 and 870 either side of the 16px gap. */
+    grid-template-columns: 1.2fr 2fr;
     gap: 16px;
     padding-block: 16px;
   }

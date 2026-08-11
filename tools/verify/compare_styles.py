@@ -24,6 +24,19 @@ import sys
 # Deliberate, signed-off differences. Each needs a reason, and a reason that is
 # about the design — "it was wrong before" — not about convenience.
 WAIVERS = {
+    ("name", "_box"):
+        "the glyphs are identical — 'Senior Product Designer' measures 245px in "
+        "both — and only the container around them differs. Framer's block is "
+        "289 wide with 44px of slack; nothing visible changes",
+    ("jobTitle", "_box"): "same container slack as name",
+    ("captionLink", "_box"):
+        "6px, from the spaces Framer keeps either side of the link text. The "
+        "rendered words and their underline are identical",
+    ("caseBody", "padding-bottom"):
+        "Framer ends every block with a <br><br>; the rebuild uses one line of "
+        "padding instead. Same space, same box height, different mechanism",
+    ("caseBullet", "padding-bottom"):
+        "same as caseBody",
     ("captionLink", "text-decoration-color"):
         "the original hard-coded this off the dark-theme green so it never "
         "switched with the theme; derived from --accent now, which fixes light mode",
@@ -41,7 +54,7 @@ TEXT_ONLY_ON_TEXT = {"font-family", "font-size", "font-weight", "line-height",
                      "text-decoration-thickness", "color"}
 IMAGE_LANDMARKS = {"caseImage"}
 
-LAYOUT_ONLY = {"_box", "display", "flex-direction", "align-items",
+LAYOUT_ONLY = {"_box", "_boxTolerance", "display", "flex-direction", "align-items",
                "justify-content", "gap", "margin-top", "margin-bottom",
                "padding-top", "padding-bottom", "border-radius",
                "border-top-width", "border-top-color", "background-color"}
@@ -86,7 +99,11 @@ def main() -> None:
         if name not in cand:
             continue
         for prop, ref_value in ref_style.items():
-            if prop.startswith("_") or prop not in cand[name]:
+            # `_box` is the element's rendered size and is the whole point of a
+            # layout gate — skipping every underscore key quietly excluded it,
+            # which is how a rebuild whose text wrapped differently and whose
+            # page was 200px shorter passed a "no differences" run.
+            if prop == "_text" or prop not in cand[name]:
                 continue
             if type_only and prop in LAYOUT_ONLY:
                 continue

@@ -43,8 +43,7 @@ const LANDMARKS = [
       .find(e => e.textContent.includes('@gmail.com'))],
   ['sectionTitle', () => leaves()
       .find(e => e.textContent.trim() === 'Selected Case Studies')],
-  ['updatedLine', () => [...document.querySelectorAll('p,div')]
-      .find(e => e.children.length === 0 && e.textContent.startsWith('Updated:'))],
+  ['updatedLine', () => leaves().find(e => e.textContent.startsWith('Updated:'))],
   ['caseTitle', () => [...document.querySelectorAll('h3')]
       .find(e => e.textContent.startsWith('From Source to Publish'))],
   ['caseBody', () => [...document.querySelectorAll('p')]

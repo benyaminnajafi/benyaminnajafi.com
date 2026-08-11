@@ -29,7 +29,7 @@ const meta = [
       {
         meta.map(([label, value]) => (
           <div class="meta-row">
-            <dt class="t-meta">{label}</dt>
+            <dt class="t-meta"><span>{label}</span><span>:</span></dt>
             <dd class="t-meta">{value}</dd>
           </div>
         ))
@@ -37,10 +37,10 @@ const meta = [
     </dl>
 
     <p class="link-row">
-      {caption && <span class="t-meta">{caption}:</span>}
-      <a class="t-caption-link" href={linkUrl} target="_blank" rel="noopener">
-        {linkLabel}
-      </a>
+      {caption && <span class="t-meta">{caption}<span>:</span></span>}
+      <a class="t-caption-link" href={linkUrl} target="_blank" rel="noopener"
+        >{" "}{linkLabel}{" "}</a
+      >
     </p>
   </div>
 
@@ -79,7 +79,9 @@ const meta = [
 <style>
   .case {
     display: grid;
-    grid-template-columns: 37.5% 1fr;
+    /* Framer sizes these with flex 1.2 and 2, which at 1440 gives
+     * exactly 522 and 870 either side of the 16px gap. */
+    grid-template-columns: 1.2fr 2fr;
     gap: 16px;
     padding-block: 16px;
     border-top: 1px solid var(--hairline);
@@ -91,14 +93,23 @@ const meta = [
     gap: 32px;
   }
 
-  .prose :global(p + p) {
-    margin-top: 20px;
+  /* Vertical rhythm, measured off the original rather than chosen.
+   *
+   * Framer closes every paragraph and list item with a <br><br>, so each block
+   * carries one empty line of its own and the gap between blocks is zero. The
+   * markdown drops those breaks — they are spacing, not content — so the same
+   * line is added back as padding. Using margin instead would advance the page
+   * identically but leave every block 25.6px shorter than the reference, and a
+   * gap between blocks instead would put the space in the wrong place at the
+   * end of a list. */
+  .prose :global(p),
+  .prose :global(li) {
+    padding-bottom: 1.6em;
   }
   .prose :global(ul) {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    margin-top: 20px;
+    gap: 0;
   }
   .prose :global(li) {
     padding-left: 22px;
@@ -124,15 +135,22 @@ const meta = [
   .meta dd {
     margin: 0;
   }
-  .meta dt::after {
-    content: ":";
-  }
-
-  .link-row {
+  /* Label and colon are separate blocks in the original, so the label's box is
+   * the label's own width. */
+  .meta dt {
     display: flex;
-    align-items: baseline;
-    gap: 6px;
-    flex-wrap: wrap;
+  }
+  .meta dt > span {
+    display: block;
+  }
+  /* The colon is its own node, as in the original, so the label measures the
+   * label and the two do not merge into one wider box. */
+
+  /* Inline, not flex: the caption and its link sit on one text line in the
+   * original and a flex container would blockify the anchor, which changes both
+   * its box and how the dashed underline runs across it. */
+  .link-row {
+    display: block;
   }
 
   .slides {
