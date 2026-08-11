@@ -1,0 +1,83 @@
+/* Reset and page frame.
+ *
+ * The original shipped Framer's reset plus two runtime components that each
+ * injected a <style> tag on mount — Scrollbar_disable and DVH. Both are six
+ * lines of CSS and neither needs JavaScript, so they are inlined here and the
+ * components are gone.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%; /* 1rem = 16px; every size in type.css assumes this */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh; /* was the DVH.tsx component */
+  background-color: var(--surface);
+  font-family: var(--font-variable);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* was Scrollbar_disable.tsx — the page hides its scrollbar but stays scrollable */
+body {
+  scrollbar-width: none;
+}
+body::-webkit-scrollbar {
+  display: none;
+}
+
+h1,
+h2,
+h3,
+p,
+figure {
+  margin: 0;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+::selection {
+  background-color: var(--accent);
+  color: var(--on-accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Every animation on this site used the same curve and duration: linear, 0.2s.
+ * Honour a reduced-motion preference rather than reproducing that faithfully. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

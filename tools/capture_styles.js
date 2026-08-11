@@ -35,7 +35,8 @@ const LANDMARKS = [
       .find(e => e.children.length === 0 && e.textContent.trim() === 'Selected Case Studies')],
   ['updatedLine', () => [...document.querySelectorAll('p,div')]
       .find(e => e.children.length === 0 && e.textContent.startsWith('Updated:'))],
-  ['caseTitle', () => document.querySelector('[data-framer-name="project-title"] h3')],
+  ['caseTitle', () => [...document.querySelectorAll('h3')]
+      .find(e => e.textContent.startsWith('From Source to Publish'))],
   ['caseBody', () => [...document.querySelectorAll('p')]
       .find(e => e.textContent.startsWith('Revaal puts AI'))],
   ['caseBullet', () => document.querySelector('li')],

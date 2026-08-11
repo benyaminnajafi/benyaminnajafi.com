@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Type fixture</title>
+<!--
+  Every type role on one page, with no layout around it.
+
+  The point is to prove src/styles/ resolves to the same computed values as the
+  live site BEFORE any layout exists, so that when the rebuilt page later differs
+  from the reference, the cause is the layout and not the type. Compared against
+  .baseline/styles-*.json by tools/verify/compare_styles.py.
+
+  The text of each sample is the same text the matching landmark carries on the
+  real page, because the landmark finder in capture_styles.js locates elements by
+  their words.
+-->
+<link rel="stylesheet" href="../../src/styles/tokens.css">
+<link rel="stylesheet" href="../../src/styles/type.css">
+<link rel="stylesheet" href="../../src/styles/base.css">
+<style>
+  body { padding: 40px; display: flex; flex-direction: column; gap: 28px; }
+  .slide { background: #1c54d6; padding: 12px; width: max-content; }
+</style>
+</head>
+<body>
+  <h1 class="t-name">Benyamin Najafi</h1>
+  <p class="t-job-title">Senior Product Designer</p>
+  <p class="t-bio">10+ years of experience leading design teams to build scalable
+    products, from 0→1 startups to market-leading platforms.</p>
+  <p><a class="t-link" href="mailto:ben.najafi@gmail.com">ben.najafi@gmail.com</a></p>
+  <p class="t-meta">Selected Case Studies</p>
+  <p class="t-meta">Updated: August 10, 2026</p>
+  <h3 class="t-case-title">From Source to Publish on One Canvas</h3>
+  <p class="t-body">Revaal puts AI agents on a canvas a content team can see, wire,
+    run and audit.</p>
+  <ul><li class="t-body">Designed for the constraint: Iranian sources read from inside.</li></ul>
+  <p class="t-meta">Role</p>
+  <p class="t-meta">Founding Product Designer</p>
+  <p><a class="t-caption-link" href="#">Read case study ⤴︎</a></p>
+  <div class="slide"><span class="t-hint">Click or Drag</span></div>
+  <p class="t-meta">© Benyamin Najafi, 2026</p>
+</body>
+</html>

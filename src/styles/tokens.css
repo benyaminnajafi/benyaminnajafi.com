@@ -1,0 +1,58 @@
+/* Colour tokens.
+ *
+ * Values are what the browser resolved on the live site, captured in
+ * .baseline/styles-{light,dark}.json — not what the old CSS declared. Framer
+ * wrote a stale fallback beside every `var(--token-…)`, so the inline values in
+ * the old markup disagree with the real ones and must not be used as a source.
+ *
+ * Framer carried 17 tokens named by UUID. Five were never referenced by
+ * anything and are dropped; five were per-case-study slide backdrops and now
+ * live with the case study they belong to, in content/case-studies/*.md.
+ * Seven remain, and they are the only ones that change with the theme.
+ *
+ * Three ways in, in priority order: the system preference, then an explicit
+ * choice stamped on <html> by the toggle, which must win in both directions.
+ */
+
+:root {
+  color-scheme: light;
+
+  --surface: #ffffff;
+  --text: #121212;
+  --text-muted: rgba(18, 18, 18, 0.65);
+  --text-emphasis: rgba(18, 18, 18, 0.85);
+  --hairline: rgba(18, 18, 18, 0.2);
+  --accent: #47691e;
+  --on-accent: #ffffff;
+
+  /* The carousel hint sits on the case study's own coloured slide, so it is
+   * white in both themes. It was hard-coded in the original too; keeping it a
+   * token makes that deliberate rather than accidental. */
+  --on-slide: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --surface: #121212;
+    --text: #f0f0f0;
+    --text-muted: rgba(244, 244, 244, 0.55);
+    --text-emphasis: rgba(244, 244, 244, 0.85);
+    --hairline: rgba(244, 244, 244, 0.2);
+    --accent: #88c93a;
+    --on-accent: #000000;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --surface: #121212;
+  --text: #f0f0f0;
+  --text-muted: rgba(244, 244, 244, 0.55);
+  --text-emphasis: rgba(244, 244, 244, 0.85);
+  --hairline: rgba(244, 244, 244, 0.2);
+  --accent: #88c93a;
+  --on-accent: #000000;
+}

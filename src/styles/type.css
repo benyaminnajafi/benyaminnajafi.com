@@ -1,0 +1,194 @@
+/* Typography.
+ *
+ * Two faces do all the work, and they are not interchangeable:
+ *
+ *   Manrope           four static cuts, used at 500 / 600 / 800
+ *   Manrope Variable  one file, driven by font-variation-settings
+ *
+ * The variable face always reports font-weight: 400 to getComputedStyle — its
+ * real weight rides in `font-variation-settings: "wght" N`. Setting font-weight
+ * on it does nothing. That is why the old site's computed styles read 400 for
+ * headings that are visibly extra-bold.
+ *
+ * Sizes below are the resolved pixel values from .baseline/styles-*.json.
+ * They are written in rem against a 16px root, with the px in a comment, so a
+ * reader can check them against the reference without doing arithmetic.
+ */
+
+@font-face {
+  font-family: "Manrope";
+  src: url("../assets/fonts/manrope-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Manrope";
+  src: url("../assets/fonts/manrope-600.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Manrope";
+  src: url("../assets/fonts/manrope-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Manrope";
+  src: url("../assets/fonts/manrope-800.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Manrope Variable";
+  src: url("../assets/fonts/manrope-variable.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-static: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-variable: "Manrope Variable", "Manrope", system-ui, sans-serif;
+}
+
+/* --- roles ---------------------------------------------------------------
+ * Each block is one measured landmark. The comment names the landmark in
+ * .baseline/styles-light.json so the two can be compared line by line.
+ */
+
+/* landmark: name — 28.8px / 800 / 23.04px / -0.576px */
+.t-name {
+  font-family: var(--font-static);
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 0.8em;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+/* landmark: jobTitle — 22.4px / 500 / 31.36px / -0.448px */
+.t-job-title {
+  font-family: var(--font-static);
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.4em;
+  letter-spacing: -0.02em;
+  color: var(--text-emphasis);
+}
+
+/* landmark: bio — 16.8px / 600 / 26.88px / -0.168px */
+.t-bio {
+  font-family: var(--font-static);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.6em;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+/* landmark: caseTitle — 22.4px / wght 800 / 33.6px / normal */
+.t-case-title {
+  font-family: var(--font-variable);
+  font-size: 1.4rem;
+  font-weight: 400; /* the variable face carries its weight in the axis below */
+  font-variation-settings: "wght" 800;
+  line-height: 1.5em;
+  letter-spacing: 0;
+  color: var(--text);
+}
+
+/* landmark: caseBody, caseBullet — 16px / 600 / 25.6px / 0.16px */
+.t-body {
+  font-family: var(--font-static);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.6em;
+  letter-spacing: 0.01em;
+  color: var(--text);
+}
+
+/* landmark: metaLabel, metaValue, sectionTitle, updatedLine, footer
+ * 16px / wght 700 / 24px / normal / muted — the workhorse role */
+.t-meta {
+  font-family: var(--font-variable);
+  font-size: 1rem;
+  font-weight: 400; /* the variable face carries its weight in the axis below */
+  font-variation-settings: "wght" 700;
+  line-height: 1.5em;
+  letter-spacing: 0;
+  color: var(--text-muted);
+}
+
+/* landmark: contactLink — same metrics, primary colour, dashed underline */
+.t-link {
+  font-family: var(--font-variable);
+  font-size: 1rem;
+  font-weight: 400; /* the variable face carries its weight in the axis below */
+  font-variation-settings: "wght" 700;
+  line-height: 1.5em;
+  color: var(--text);
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 1.2px;
+  text-underline-offset: 3px;
+  text-decoration-skip-ink: all;
+  text-decoration-color: var(--text-emphasis);
+  transition: color 0.2s linear, text-decoration-color 0.2s linear,
+    text-decoration-thickness 0.2s linear, text-underline-offset 0.2s linear;
+}
+.t-link:hover {
+  color: var(--text-muted);
+}
+
+/* landmark: captionLink — the accent-green "Read case study" link.
+ *
+ * The original hard-coded this link's underline and background off the DARK
+ * theme green (#88c93a66 / #88c93a0a) so they did not switch with the theme —
+ * a real bug in light mode, where a dark-green word sat on a light-green wash.
+ * Deriving them from --accent fixes it and keeps dark mode identical. */
+.t-caption-link {
+  font-family: var(--font-variable);
+  font-size: 1rem;
+  font-weight: 400; /* the variable face carries its weight in the axis below */
+  font-variation-settings: "wght" 700;
+  line-height: 1.5em;
+  color: var(--accent);
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-skip-ink: all;
+  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  background-color: color-mix(in srgb, var(--accent) 4%, transparent);
+  padding: 2px 2px 0 2px;
+  border-radius: 2px 2px 1px 1px;
+  transition: color 0.2s linear, text-decoration-color 0.2s linear,
+    background-color 0.2s linear;
+}
+.t-caption-link:hover {
+  background-color: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+/* landmark: carouselHint — white on the case study's coloured slide */
+.t-hint {
+  font-family: var(--font-variable);
+  font-size: 1rem;
+  font-weight: 400; /* the variable face carries its weight in the axis below */
+  font-variation-settings: "wght" 700;
+  line-height: 1.5em;
+  color: var(--on-slide);
+}
+
+/* The name is the one role that changes size across breakpoints:
+ * 28.8px above 1200px, 25.6px below, with a looser line-height. */
+@media (max-width: 1199.98px) {
+  .t-name {
+    font-size: 1.6rem;
+    line-height: 1.4em;
+  }
+}
