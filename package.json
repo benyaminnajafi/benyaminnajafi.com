@@ -1,0 +1,16 @@
+{
+  "name": "benyaminnajafi.com",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "extract": "python3 tools/extract_content.py && python3 tools/organize_assets.py",
+    "verify": "python3 tools/verify_content.py"
+  },
+  "dependencies": {
+    "astro": "^7.2.1"
+  }
+}
