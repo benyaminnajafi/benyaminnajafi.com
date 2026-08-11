@@ -10,12 +10,12 @@ linkUrl: "https://docs.google.com/document/d/1UYU7kAC9iOrH96dMo6OguTkoNweBBi25Xa
 accent: "#ffeade"
 framerId: "G0UtrXzKZ"
 images:
-  - "_cdn/framerusercontent.com/images/WEyLlfX1Ul8JoJs0APhBPCUBI__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/evllE7uEA8dZjWGArfRbxfyMLA__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/hQbCZno0pKNPZQdjDgOc3rTS4po__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/pi3vGJMpC0Hrm430X1NZVk8DUg__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/ZPl6GXnNLWsGAuaRd0VO6iEFfso__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/7LcKjB1tEILbCXIlUc885nUgSHs__width-1920-height-1440.png"
+  - "../../src/assets/case-studies/redefining-grocery-discovery/01.png"
+  - "../../src/assets/case-studies/redefining-grocery-discovery/02.png"
+  - "../../src/assets/case-studies/redefining-grocery-discovery/03.png"
+  - "../../src/assets/case-studies/redefining-grocery-discovery/04.png"
+  - "../../src/assets/case-studies/redefining-grocery-discovery/05.png"
+  - "../../src/assets/case-studies/redefining-grocery-discovery/06.png"
 ---
 
 I led the transition from a restrictive vendor-first model to a unified **"Product-Based"** experience by analyzing quantitative funnels (Metabase) and qualitative behaviors (Hotjar session recordings and usability tests).

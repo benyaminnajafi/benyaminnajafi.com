@@ -10,10 +10,10 @@ linkUrl: "https://docs.google.com/document/d/1UYU7kAC9iOrH96dMo6OguTkoNweBBi25Xa
 accent: "#dae3f7"
 framerId: "RPwzi9ERs"
 images:
-  - "_cdn/framerusercontent.com/images/IJOIccVplSPkJP6rxNTVPvmEk__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/UTI4kUsz1O5pGmXmQPE8hViTw__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/9U48bfcx40CyyDNFxY6Tgd3Kc__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/7tL8ONjwcOGoMdrD1MWO8bMw__width-1920-height-1440.png"
+  - "../../src/assets/case-studies/orchestrating-delivery-at-scale/01.png"
+  - "../../src/assets/case-studies/orchestrating-delivery-at-scale/02.png"
+  - "../../src/assets/case-studies/orchestrating-delivery-at-scale/03.png"
+  - "../../src/assets/case-studies/orchestrating-delivery-at-scale/04.png"
 ---
 
 To ensure seamless delivery from design to deployment, I managed the entire product development process end-to-end.

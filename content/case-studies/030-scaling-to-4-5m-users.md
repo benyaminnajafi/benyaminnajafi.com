@@ -10,12 +10,12 @@ linkUrl: "https://docs.google.com/document/d/1UYU7kAC9iOrH96dMo6OguTkoNweBBi25Xa
 accent: "#ffd96f"
 framerId: "bnVQcA4Jz"
 images:
-  - "_cdn/framerusercontent.com/images/mSMGmHaTjyAhtY7H6qitCvQtO4__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/cfLS77YlhhPz3NdkuOEk2pOvhEQ__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/64ClanBg4MFYjjH3QoqXSx9hMe8__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/DjCkB4iegeDqrF6YHwFylwXwBSE__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/ns3w67Pif1WfrJiipKPUAsBb6jU__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/cDnTxkGsXrhfWgzNvxNRJ1GKo__width-1920-height-1440.png"
+  - "../../src/assets/case-studies/scaling-to-4-5m-users/01.png"
+  - "../../src/assets/case-studies/scaling-to-4-5m-users/02.png"
+  - "../../src/assets/case-studies/scaling-to-4-5m-users/03.png"
+  - "../../src/assets/case-studies/scaling-to-4-5m-users/04.png"
+  - "../../src/assets/case-studies/scaling-to-4-5m-users/05.png"
+  - "../../src/assets/case-studies/scaling-to-4-5m-users/06.png"
 ---
 
 Spearheaded a complete platform redesign by establishing a robust, scalable design system to ensure long-term consistency.

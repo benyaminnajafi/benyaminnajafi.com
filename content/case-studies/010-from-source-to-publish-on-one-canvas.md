@@ -10,11 +10,11 @@ linkUrl: "https://revaal.app/"
 accent: "#1c54d6"
 framerId: "revaalCase01"
 images:
-  - "_cdn/framerusercontent.com/images/revaalShot1Kv3__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/revaalShot2Kv3__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/revaalShot3Kv3__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/revaalShot4Kv3__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/revaalShot5Kv3__width-1920-height-1440.png"
+  - "../../src/assets/case-studies/from-source-to-publish-on-one-canvas/01.png"
+  - "../../src/assets/case-studies/from-source-to-publish-on-one-canvas/02.png"
+  - "../../src/assets/case-studies/from-source-to-publish-on-one-canvas/03.png"
+  - "../../src/assets/case-studies/from-source-to-publish-on-one-canvas/04.png"
+  - "../../src/assets/case-studies/from-source-to-publish-on-one-canvas/05.png"
 ---
 
 Revaal puts AI agents on a canvas a content team can see, wire, run and audit — connect a source, arrange the steps, let the last step publish, no code.

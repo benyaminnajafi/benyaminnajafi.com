@@ -10,9 +10,9 @@ linkUrl: "https://benan.app/"
 accent: "#e3a059"
 framerId: "benanCase01"
 images:
-  - "_cdn/framerusercontent.com/images/benanShot1Kv3__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/benanShot2Kv3__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/benanShot3Kv3__width-1920-height-1440.png"
+  - "../../src/assets/case-studies/five-specialists-behind-one-conversation/01.png"
+  - "../../src/assets/case-studies/five-specialists-behind-one-conversation/02.png"
+  - "../../src/assets/case-studies/five-specialists-behind-one-conversation/03.png"
 ---
 
 Benan is a Persian, right-to-left investment assistant you talk to: tap the orb and a voice agent answers out loud, or type and the same assistant replies in the chat bar.

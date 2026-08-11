@@ -10,12 +10,12 @@ linkUrl: "https://docs.google.com/document/d/1UYU7kAC9iOrH96dMo6OguTkoNweBBi25Xa
 accent: "#2b55a0"
 framerId: "y8y4Eq1YR"
 images:
-  - "_cdn/framerusercontent.com/images/ZSpeWuagj3A6eZmW4jNgu3m2B4__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/RhDzpmE0OrDZ2wOpHQTouxii0__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/Hi9YjvQykZQsAu2J3opU9eXHw__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/5KMbPTG3bske7s5Ot8DU06vgkY__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/5jibYcc8qgsQcpvCAZBzkoNpqk__width-1920-height-1440.png"
-  - "_cdn/framerusercontent.com/images/YggMFzOABO5brwVO1XStL7rGz0__width-1920-height-1440.png"
+  - "../../src/assets/case-studies/founding-a-fintech/01.png"
+  - "../../src/assets/case-studies/founding-a-fintech/02.png"
+  - "../../src/assets/case-studies/founding-a-fintech/03.png"
+  - "../../src/assets/case-studies/founding-a-fintech/04.png"
+  - "../../src/assets/case-studies/founding-a-fintech/05.png"
+  - "../../src/assets/case-studies/founding-a-fintech/06.png"
 ---
 
 Spearheaded the zero-to-one product and service design for a novel melted gold trading and storage platform, tasked with navigating established market limitations and shaping a strong Go-To-Market (GTM) strategy:

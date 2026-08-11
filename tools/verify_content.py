@@ -113,7 +113,10 @@ def main() -> None:
         images = meta.get("images", [])
         check(len(images) >= 1, f"{name}: no images")
         for src in images:
-            check(os.path.exists(os.path.join(SITE, src)), f"{name}: missing image {src}")
+            # Image paths are relative to the content file, the way a static site
+            # generator resolves them — not to the repo root.
+            target = os.path.normpath(os.path.join(os.path.dirname(path), src))
+            check(os.path.exists(target), f"{name}: missing image {src}")
 
     # 2. nothing the page shows may be missing from the content
     titles = [normalize(parse(p)[0]["title"]) for p in files]
