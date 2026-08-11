@@ -28,6 +28,10 @@
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
+      // The original set `smoothTouch: true`, which this version of lenis calls
+      // syncTouch. Without it a phone falls back to native scrolling and the
+      // site feels different on the device most people will open it on.
+      syncTouch: true,
       touchMultiplier: 1,
       infinite: false,
     });
@@ -52,11 +56,21 @@
       });
     }
 
-    // The carousels scroll horizontally. Lenis owns the wheel, so a wheel event
-    // over a track has to be handed back or the strip cannot be scrolled.
+    // A carousel is 62% of the width and 653px tall. Stopping Lenis while the
+    // pointer is over one — the obvious way to let it scroll horizontally —
+    // means the page will not scroll at all across most of its own area. The
+    // track is dragged, not wheeled, so the wheel stays with the page and only
+    // a genuinely horizontal gesture is handed to the strip.
     for (const track of document.querySelectorAll<HTMLElement>(".track")) {
-      track.addEventListener("mouseenter", () => lenis.stop());
-      track.addEventListener("mouseleave", () => lenis.start());
+      track.addEventListener(
+        "wheel",
+        (event) => {
+          if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+          event.stopPropagation();
+          track.scrollLeft += event.deltaX;
+        },
+        { passive: true },
+      );
     }
   }
 </script>

@@ -29,15 +29,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # npm ci, not npm install: the lockfile decides, so a build here matches a
+      # build on the laptop and neither drifts on its own.
+      - run: npm ci
+
+      - run: npm run build
+
       - uses: actions/configure-pages@v5
 
-      # ROLLED BACK to the Framer output. The Astro rebuild matches on type and
-      # text but not on interaction — smooth scroll was never built and the
-      # carousel behaves differently — so it is not what should be serving a
-      # portfolio. It stays in the repo and ships again once it feels the same.
+      # public/CNAME is copied into dist/ by the build, so the custom domain
+      # survives every deploy and DNS and the certificate are untouched.
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: dist
 
       - id: deployment
         uses: actions/deploy-pages@v4
