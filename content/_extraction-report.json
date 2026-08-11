@@ -59,6 +59,7 @@
     "bio": true,
     "email": true,
     "phone": true,
+    "phoneDisplay": true,
     "linkedin": true,
     "cvUrl": true,
     "updated": true,

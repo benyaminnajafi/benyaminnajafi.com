@@ -1,6 +1,8 @@
-# GitHub Pages فقط می‌تواند از ریشه‌ی ریپو یا از docs/ دیپلوی کند، و سایت ما در
-# site/ است. پس به‌جای جابه‌جا کردن پوشه (که tools/serve.py را می‌شکند)، همین‌جا
-# فقط site/ را به‌عنوان artifact آپلود می‌کنیم.
+# Build the site with Astro and publish dist/ to GitHub Pages.
+#
+# site/ — the frozen Framer output — is still in the repo but is no longer what
+# ships. It stays until the rebuild has run cleanly for a while, because it is
+# the reference the fidelity harness measures against.
 name: Deploy site to GitHub Pages
 
 on:
@@ -27,11 +29,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # npm ci, not npm install: the lockfile decides, so a build here matches a
+      # build on the laptop and neither drifts on its own.
+      - run: npm ci
+
+      - run: npm run build
+
       - uses: actions/configure-pages@v5
 
+      # public/CNAME is copied into dist/ by the build, so the custom domain
+      # survives every deploy and DNS and the certificate are untouched.
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: dist
 
       - id: deployment
         uses: actions/deploy-pages@v4

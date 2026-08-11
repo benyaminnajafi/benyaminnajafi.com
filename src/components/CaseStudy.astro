@@ -1,0 +1,228 @@
+---
+import { Image } from "astro:assets";
+import { render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  entry: CollectionEntry<"caseStudies">;
+  eager?: boolean;
+}
+const { entry, eager = false } = Astro.props;
+const { title, role, expertise, industry, caption, linkLabel, linkUrl, accent, images } =
+  entry.data;
+const { Content } = await render(entry);
+
+const meta = [
+  ["Role", role],
+  ["Expertise", expertise],
+  ["Industry", industry],
+] as const;
+---
+
+<article class="case">
+  <div class="details">
+    <h3 class="t-case-title">{title}</h3>
+
+    <div class="prose t-body"><Content /></div>
+
+    <dl class="meta">
+      {
+        meta.map(([label, value]) => (
+          <div class="meta-row">
+            <dt class="t-meta">{label}</dt>
+            <dd class="t-meta">{value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <p class="link-row">
+      {caption && <span class="t-meta">{caption}:</span>}
+      <a class="t-caption-link" href={linkUrl} target="_blank" rel="noopener">
+        {linkLabel}
+      </a>
+    </p>
+  </div>
+
+  <!--
+    The slides are a scroll-snap strip, not a JavaScript carousel. It gives the
+    same feel — drag, momentum on touch, snapping — while rendering every slide
+    with scripting off, which the original did not. Pointer-drag for a mouse is
+    added by a small script; without it the strip still scrolls.
+  -->
+  <div class="slides" style={`--accent-slide:${accent}`}>
+    <div
+      class="track"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label={`${title} — ${images.length} slides`}
+      tabindex="0"
+    >
+      {
+        images.map((img, i) => (
+          <figure class="slide" aria-roledescription="slide" aria-label={`Slide ${i + 1} of ${images.length}`}>
+            <Image
+              src={img}
+              alt={`${title} — slide ${i + 1}`}
+              widths={[512, 1024, 1920]}
+              sizes="(max-width: 1199px) 100vw, 62vw"
+              loading={eager && i === 0 ? "eager" : "lazy"}
+            />
+          </figure>
+        ))
+      }
+    </div>
+    <p class="hint t-hint">Click or Drag</p>
+  </div>
+</article>
+
+<style>
+  .case {
+    display: grid;
+    grid-template-columns: 37.5% 1fr;
+    gap: 16px;
+    padding-block: 16px;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .details {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .prose :global(p + p) {
+    margin-top: 20px;
+  }
+  .prose :global(ul) {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .prose :global(li) {
+    padding-left: 22px;
+    position: relative;
+  }
+  .prose :global(li)::before {
+    content: "•";
+    position: absolute;
+    left: 6px;
+  }
+
+  .meta {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .meta-row {
+    display: flex;
+    gap: 6px;
+  }
+  .meta dt,
+  .meta dd {
+    margin: 0;
+  }
+  .meta dt::after {
+    content: ":";
+  }
+
+  .link-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .slides {
+    position: relative;
+    background: var(--accent-slide);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    height: 100%;
+    cursor: grab;
+  }
+  .track::-webkit-scrollbar {
+    display: none;
+  }
+  .track:active {
+    cursor: grabbing;
+  }
+
+  .slide {
+    margin: 0;
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+  }
+  .slide :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hint {
+    position: absolute;
+    left: 16px;
+    bottom: 12px;
+    margin: 0;
+    pointer-events: none;
+  }
+  /* A mouse drags; a finger taps. The original shipped both words as separate
+   * markup at every breakpoint — thirty copies of two strings. */
+  @media (hover: none) {
+    .hint::after {
+      content: "Tap or Drag";
+    }
+    .hint {
+      font-size: 0;
+    }
+    .hint::after {
+      font-size: 1rem;
+    }
+  }
+
+  @media (max-width: 1199.98px) {
+    .case {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  // Drag-to-scroll for a mouse. Touch already does this natively, and with this
+  // script absent the strip is still scrollable and every slide still renders.
+  for (const track of document.querySelectorAll<HTMLElement>(".track")) {
+    let startX = 0;
+    let startLeft = 0;
+    let dragging = false;
+
+    track.addEventListener("pointerdown", (e) => {
+      if (e.pointerType !== "mouse") return;
+      dragging = true;
+      startX = e.clientX;
+      startLeft = track.scrollLeft;
+      track.setPointerCapture(e.pointerId);
+    });
+
+    track.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+      e.preventDefault();
+      track.scrollLeft = startLeft - (e.clientX - startX);
+    });
+
+    const end = () => {
+      dragging = false;
+    };
+    track.addEventListener("pointerup", end);
+    track.addEventListener("pointercancel", end);
+  }
+</script>

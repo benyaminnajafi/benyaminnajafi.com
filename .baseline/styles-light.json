@@ -1,5 +1,6 @@
 {
- "theme": "rgb(18, 18, 18)",
+ "theme": "light",
+ "themeProbe": "rgb(18, 18, 18)",
  "page": {
   "background": "rgb(255, 255, 255)",
   "scrollHeight": 5457,

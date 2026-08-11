@@ -1,0 +1,30 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import profile from "../../content/profile.json";
+---
+
+<BaseLayout
+  title={`Page not found・${profile.name}`}
+  description="This page does not exist."
+>
+  <div class="not-found">
+    <ThemeToggle />
+    <h1 class="t-name">Page not found…</h1>
+    <p><a class="t-link" href="/">Go home</a></p>
+    <p class="t-meta">{profile.footer}</p>
+  </div>
+</BaseLayout>
+
+<style>
+  /* The original centres this in the viewport with nothing else on the page. */
+  .not-found {
+    min-height: calc(100dvh - 32px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-align: center;
+  }
+</style>

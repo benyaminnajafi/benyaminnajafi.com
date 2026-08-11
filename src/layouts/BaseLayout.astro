@@ -1,0 +1,63 @@
+---
+import "../styles/tokens.css";
+import "../styles/type.css";
+import "../styles/base.css";
+import profile from "../../content/profile.json";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = profile.bio } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={Astro.site} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+
+    <!--
+      Theme, before first paint.
+
+      This has to be inline and in the head, not a module: anything deferred
+      runs after the first paint, and the page would flash light before turning
+      dark. It is the one script that must block, and it is four lines.
+
+      The old site did this by walking document.styleSheets at runtime, reading
+      the token declarations back out of the CSSOM and injecting a new <style>.
+      Declaring the tokens twice in CSS makes all of that unnecessary.
+    -->
+    <script is:inline>
+      (() => {
+        const saved = localStorage.getItem("theme");
+        if (saved === "light" || saved === "dark") {
+          document.documentElement.dataset.theme = saved;
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <main class="page">
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  /* The page is a single column capped at 1440, with a 16px gutter. Everything
+   * inside it shares one grid ratio, measured off the original: the text column
+   * and the wide column split 522 / 870 at 1440px, which is 37.5% / 62.5%
+   * either side of a 16px gap. */
+  .page {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: 16px;
+  }
+</style>

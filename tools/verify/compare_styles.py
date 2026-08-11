@@ -32,6 +32,15 @@ WAIVERS = {
 }
 
 # Box geometry belongs to the layout gate, not the type gate.
+# Text properties resolve on an <img> but never render. Comparing them just
+# reports whatever the two containers happened to inherit.
+TEXT_ONLY_ON_TEXT = {"font-family", "font-size", "font-weight", "line-height",
+                     "letter-spacing", "font-variation-settings",
+                     "text-decoration-line", "text-decoration-style",
+                     "text-decoration-color", "text-underline-offset",
+                     "text-decoration-thickness", "color"}
+IMAGE_LANDMARKS = {"caseImage"}
+
 LAYOUT_ONLY = {"_box", "display", "flex-direction", "align-items",
                "justify-content", "gap", "margin-top", "margin-bottom",
                "padding-top", "padding-bottom", "border-radius",
@@ -56,6 +65,13 @@ def main() -> None:
     }
     allowed_missing = {n for spec in allowed_missing for n in spec.split(",")}
 
+    # Refuse to compare a light capture against a dark one. localStorage is
+    # per-origin, so a theme set on one port does not apply to another, and the
+    # resulting mismatch looks exactly like a hundred colour regressions.
+    if candidate.get("theme") != reference.get("theme"):
+        sys.exit(f"theme mismatch: candidate is {candidate.get('theme')!r}, "
+                 f"reference is {reference.get('theme')!r} — recapture")
+
     cand = candidate["landmarks"]
     ref = reference["landmarks"]
 
@@ -73,6 +89,8 @@ def main() -> None:
             if prop.startswith("_") or prop not in cand[name]:
                 continue
             if type_only and prop in LAYOUT_ONLY:
+                continue
+            if name in IMAGE_LANDMARKS and prop in TEXT_ONLY_ON_TEXT:
                 continue
             compared += 1
             got = cand[name][prop]

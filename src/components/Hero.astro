@@ -1,0 +1,99 @@
+---
+import { Image } from "astro:assets";
+import profile from "../../content/profile.json";
+import portrait from "../assets/portrait.jpeg";
+import ThemeToggle from "./ThemeToggle.astro";
+---
+
+<header class="hero">
+  <div class="identity">
+    <div class="name-row">
+      <ThemeToggle />
+      <h1 class="t-name">{profile.name}</h1>
+    </div>
+    <p class="t-job-title">{profile.jobTitle}</p>
+  </div>
+
+  <div class="about">
+    <Image
+      src={portrait}
+      alt={`${profile.name}, ${profile.jobTitle}`}
+      widths={[200, 400]}
+      sizes="200px"
+      class="portrait"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div class="about-text">
+      <p class="t-bio" set:html={profile.bioHtml ?? profile.bio} />
+      <ul class="contacts">
+        <li><a class="t-link" href={`mailto:${profile.email}`}>{profile.email}</a></li>
+        <li><a class="t-link" href={`tel:${profile.phone}`}>{profile.phoneDisplay ?? profile.phone}</a></li>
+        <li><a class="t-link" href={profile.linkedin} rel="me">LinkedIn</a></li>
+        <li><a class="t-link" href={profile.cvUrl}>CV</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* Measured from the original: 24px above, 16px below, 16px between columns,
+   * and the same 37.5 / 62.5 split the case study rows use. */
+  .hero {
+    display: grid;
+    grid-template-columns: 37.5% 1fr;
+    gap: 16px;
+    padding-block: 24px 16px;
+  }
+
+  .identity {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .name-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .about {
+    display: flex;
+    gap: 16px;
+  }
+
+  .portrait {
+    width: 200px;
+    height: auto;
+    border-radius: 4px;
+    flex: none;
+  }
+
+  .about-text {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .contacts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  /* Below the point where two columns stop fitting, the hero stacks. The
+   * original shipped a separate markup variant for this; one rule does it. */
+  @media (max-width: 1199.98px) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 599.98px) {
+    .about {
+      flex-direction: column;
+    }
+  }
+</style>

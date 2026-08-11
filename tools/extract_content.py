@@ -162,6 +162,9 @@ def extract_profile(html: str) -> dict:
         "bio": first(r'content="(10\+ years of experience[^"]+)"'),
         "email": first(r'href="mailto:([^"]+)"'),
         "phone": first(r'href="tel:([^"]+)"'),
+        # The tel: href is E.164 and unreadable; the link's own text is what the
+        # page shows. Both are needed — one to dial, one to read.
+        "phoneDisplay": first(r'href="tel:[^"]+"[^>]*>(?:<[^>]+>)*([^<]+)'),
         "linkedin": next((u for u in links if "linkedin.com" in u), ""),
         "cvUrl": next((u for u in links if "docs.google.com" in u), ""),
         "updated": first(r"Updated: ([A-Z][a-z]+ \d{2}, \d{4})"),
