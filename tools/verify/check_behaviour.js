@@ -98,7 +98,37 @@ const check = (name, ok, detail) => {
         !('lenis' in window) && !document.documentElement.classList.contains('lenis'));
 }
 
-// 5. The custom cursor: mounted, blended, out of the way, and switching state.
+// 5. The theme switch cross-fades its icon rather than snapping.
+//
+// The first build swapped display, so the change happened between frames. The
+// original animates the outgoing icon to scale(0.5) rotate(120deg) at opacity
+// 0 — a rotation and a fade, not an instant replacement.
+{
+  const button = document.querySelector('.theme-toggle');
+  const sun = button && button.querySelector('.sun');
+  const moon = button && button.querySelector('.moon');
+  check('theme switch present', !!(button && sun && moon));
+
+  if (sun && moon) {
+    const both = [sun, moon].map((i) => getComputedStyle(i));
+    check('both icons stay in the box',
+          both.every((s) => s.display !== 'none'),
+          'one is display: none, so the change cannot animate');
+    check('the icon change is animated',
+          both.every((s) => parseFloat(s.transitionDuration) > 0),
+          `transition ${both.map((s) => s.transitionDuration).join(' / ')}`);
+    // Exactly one is showing, and the other is rotated out of the way.
+    const shown = both.filter((s) => parseFloat(s.opacity) > 0.5);
+    check('exactly one icon is visible', shown.length === 1,
+          `${shown.length} visible`);
+    const hidden = both.find((s) => parseFloat(s.opacity) <= 0.5);
+    check('the hidden icon is scaled and rotated away',
+          !!hidden && hidden.transform !== 'none',
+          `transform ${hidden && hidden.transform}`);
+  }
+}
+
+// 6. The custom cursor: mounted, blended, out of the way, and switching state.
 //
 // This assumes a fine pointer. On touch the element removes itself and the
 // page keeps its ordinary cursor, which is the point of the ready flag.

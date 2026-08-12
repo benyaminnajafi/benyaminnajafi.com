@@ -37,11 +37,9 @@ WAIVERS = {
         "padding instead. Same space, same box height, different mechanism",
     ("caseBullet", "padding-bottom"):
         "same as caseBody",
-    ("captionLink", "text-decoration-color"):
-        "the original hard-coded this off the dark-theme green so it never "
-        "switched with the theme; derived from --accent now, which fixes light mode",
-    ("captionLink", "background-color"):
-        "same hard-coded dark-theme green, same fix",
+    # captionLink's underline and wash used to be waived here for deriving from
+    # --accent instead of the original's fixed green. They match now, so the
+    # waivers are gone and the gate compares them like anything else.
     ("heroBand", "_box"):
         "1440 vs 1408 wide: the original carries the 16px page gutter on the "
         "hero itself, the rebuild carries it on the page wrapper. The band is "

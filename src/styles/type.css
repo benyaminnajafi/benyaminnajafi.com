@@ -167,10 +167,11 @@
 
 /* landmark: captionLink — the accent-green "Read case study" link.
  *
- * The original hard-coded this link's underline and background off the DARK
- * theme green (#88c93a66 / #88c93a0a) so they did not switch with the theme —
- * a real bug in light mode, where a dark-green word sat on a light-green wash.
- * Deriving them from --accent fixes it and keeps dark mode identical. */
+ * The underline and wash are the bright green in both themes, not the theme's
+ * own accent. An earlier pass treated that as a bug and derived them from
+ * --accent, which made the underline the same dark green as the word it sits
+ * under in light mode and flattened the detail. The original is deliberate:
+ * a dark-green word with a brighter green rule beneath it. Matching it. */
 .t-caption-link {
   font-family: var(--font-variable);
   font-size: 1rem;
@@ -183,15 +184,15 @@
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
   text-decoration-skip-ink: all;
-  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
-  background-color: color-mix(in srgb, var(--accent) 4%, transparent);
+  text-decoration-color: rgba(136, 201, 58, 0.4);
+  background-color: rgba(136, 201, 58, 0.04);
   padding: 2px 2px 0 2px;
   border-radius: 2px 2px 1px 1px;
   transition: color 0.2s linear, text-decoration-color 0.2s linear,
     background-color 0.2s linear;
 }
 .t-caption-link:hover {
-  background-color: color-mix(in srgb, var(--accent) 20%, transparent);
+  background-color: rgba(136, 201, 58, 0.2);
 }
 
 /* landmark: carouselHint — white on the case study's coloured slide */
