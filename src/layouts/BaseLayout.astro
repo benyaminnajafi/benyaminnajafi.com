@@ -3,6 +3,7 @@ import "../styles/tokens.css";
 import "../styles/type.css";
 import "../styles/base.css";
 import profile from "../../content/profile.json";
+import Cursor from "../components/Cursor.astro";
 
 interface Props {
   title: string;
@@ -63,6 +64,7 @@ const ogImage = new URL("/og-image.webp", Astro.site).href;
     <main class="page">
       <slot />
     </main>
+    <Cursor />
   </body>
 </html>
 

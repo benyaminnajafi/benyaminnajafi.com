@@ -1,0 +1,201 @@
+---
+// The custom cursor, rebuilt from sources/MdCAsJlGM.tsx.
+//
+// A 56x56 host that follows the pointer, holding a black dot which is inverted
+// and exclusion-blended against whatever is behind it — so it reads black on
+// the light theme, white on the dark one, and inverts over the case study
+// artwork without needing a colour of its own.
+//
+// Three states, all from the original's variants:
+//
+//   default      12px dot, with two 5x10 chevrons meeting at the centre
+//   hover        32px dot, no chevrons               — links and buttons
+//   drag         24px dot plus one 8x16 chevron 24px to its right — carousels
+//
+// Pressing shrinks the dot: 24px from default and hover, 12px from drag, with
+// the drag chevron sliding 4px further out.
+//
+// It never renders for touch or a coarse pointer, and the page only gives up
+// its real cursor once the script has confirmed it is mounted — with
+// JavaScript off, the ordinary pointer stays.
+---
+
+<div class="cursor" data-cursor data-state="default" aria-hidden="true">
+  <span class="dot"></span>
+  <svg class="chev chev-right" viewBox="0 0 5 10" fill="none" aria-hidden="true">
+    <path d="M 0 0 L 5 5 L 0 10" stroke="currentColor"></path>
+  </svg>
+  <svg class="chev chev-left" viewBox="0 0 5 10" fill="none" aria-hidden="true">
+    <path d="M 5 0 L 0 5 L 5 10" stroke="currentColor"></path>
+  </svg>
+</div>
+
+<style>
+  .cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 56px;
+    height: 56px;
+    /* Parked off-screen until the pointer first moves. */
+    transform: translate3d(-100px, -100px, 0) translate(-50%, -50%);
+    /* Black under invert() is white, and white under exclusion inverts the
+     * backdrop — which is how one colour works on both themes and on top of
+     * every slide. */
+    filter: invert(1);
+    mix-blend-mode: exclusion;
+    color: #000;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.2s linear;
+    will-change: transform;
+  }
+  /* Only once the script has confirmed a fine pointer. */
+  :global(html[data-cursor-ready]) .cursor {
+    opacity: 1;
+  }
+  .cursor[data-hidden] {
+    opacity: 0;
+  }
+
+  .dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background: #000;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    /* The original animates variants on a spring with bounce 0, which has no
+     * overshoot, so a curve reproduces it. */
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .chev {
+    position: absolute;
+    top: 23px;
+    width: 5px;
+    height: 10px;
+    overflow: visible;
+    transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.2s linear;
+  }
+  .chev path {
+    stroke-width: 1;
+  }
+  .chev-right {
+    left: 28px;
+  }
+  .chev-left {
+    left: 23px;
+  }
+
+  /* hover — links and buttons */
+  .cursor[data-state="hover"] .dot {
+    width: 32px;
+    height: 32px;
+  }
+  .cursor[data-state="hover"] .chev {
+    opacity: 0;
+  }
+
+  /* drag — the carousels */
+  .cursor[data-state="drag"] .dot {
+    width: 24px;
+    height: 24px;
+  }
+  .cursor[data-state="drag"] .chev-left {
+    opacity: 0;
+  }
+  .cursor[data-state="drag"] .chev-right {
+    left: 52px;
+    top: 20px;
+    width: 8px;
+    height: 16px;
+  }
+
+  /* pressed */
+  .cursor[data-state="default"][data-pressed] .dot,
+  .cursor[data-state="hover"][data-pressed] .dot {
+    width: 24px;
+    height: 24px;
+  }
+  .cursor[data-state="drag"][data-pressed] .dot {
+    width: 12px;
+    height: 12px;
+  }
+  .cursor[data-state="drag"][data-pressed] .chev-right {
+    left: 56px;
+  }
+
+  /* A pointer that cannot hover has no cursor to replace. */
+  @media not all and (hover: hover) and (pointer: fine) {
+    .cursor {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dot,
+    .chev {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const cursor = document.querySelector<HTMLElement>("[data-cursor]");
+  const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  if (cursor && fine) {
+    const dot = cursor;
+    // Only now does the page give up its real cursor. Doing it in CSS would
+    // leave a reader with no pointer at all if this script never ran.
+    document.documentElement.setAttribute("data-cursor-ready", "");
+
+    const HOVER = "a, button, [role='button'], summary, label, input, textarea, select";
+    const DRAG = ".track, .slides";
+
+    let x = -100;
+    let y = -100;
+    let frame = 0;
+
+    const draw = () => {
+      frame = 0;
+      dot.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
+    };
+
+    addEventListener(
+      "pointermove",
+      (e) => {
+        if (e.pointerType !== "mouse") return;
+        x = e.clientX;
+        y = e.clientY;
+        if (!frame) frame = requestAnimationFrame(draw);
+
+        const el = e.target instanceof Element ? e.target : null;
+        const state = !el ? "default" : el.closest(DRAG) ? "drag" : el.closest(HOVER) ? "hover" : "default";
+        if (dot.dataset.state !== state) dot.dataset.state = state;
+        if (dot.hasAttribute("data-hidden")) dot.removeAttribute("data-hidden");
+      },
+      { passive: true },
+    );
+
+    addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "mouse") dot.setAttribute("data-pressed", "");
+    });
+    const release = () => dot.removeAttribute("data-pressed");
+    addEventListener("pointerup", release);
+    addEventListener("pointercancel", release);
+
+    // Leaving the window, or tabbing away, should not leave a dot stranded.
+    document.addEventListener("mouseleave", () => dot.setAttribute("data-hidden", ""));
+    document.addEventListener("mouseenter", () => dot.removeAttribute("data-hidden"));
+    addEventListener("blur", () => dot.setAttribute("data-hidden", ""));
+  } else if (cursor) {
+    cursor.remove();
+  }
+</script>

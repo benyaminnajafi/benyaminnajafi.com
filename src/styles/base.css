@@ -41,6 +41,15 @@ body {
   }
 }
 
+/* The real pointer is only given up once Cursor.astro has confirmed it is
+ * mounted on a fine pointer. The original did the same through a
+ * .framer-cursor-none class rather than a media query, for the same reason:
+ * with no script, a reader must keep an ordinary cursor. */
+html[data-cursor-ready],
+html[data-cursor-ready] * {
+  cursor: none !important;
+}
+
 h1,
 h2,
 h3,

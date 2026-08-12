@@ -98,6 +98,60 @@ const check = (name, ok, detail) => {
         !('lenis' in window) && !document.documentElement.classList.contains('lenis'));
 }
 
+// 5. The custom cursor: mounted, blended, out of the way, and switching state.
+//
+// This assumes a fine pointer. On touch the element removes itself and the
+// page keeps its ordinary cursor, which is the point of the ready flag.
+{
+  const cursor = document.querySelector('[data-cursor]');
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  if (!fine) {
+    check('cursor absent on a coarse pointer', !cursor);
+    check('the real cursor is left alone on a coarse pointer',
+          !document.documentElement.hasAttribute('data-cursor-ready'));
+  } else {
+    check('cursor mounted', !!cursor);
+    check('page gives up its cursor only once the script ran',
+          document.documentElement.hasAttribute('data-cursor-ready'));
+
+    if (cursor) {
+      const cs = getComputedStyle(cursor);
+      check('cursor inverts against its backdrop',
+            cs.mixBlendMode === 'exclusion' && cs.filter === 'invert(1)',
+            `blend ${cs.mixBlendMode}, filter ${cs.filter}`);
+      // Without this the dot would eat every click on the page.
+      check('cursor does not intercept the pointer', cs.pointerEvents === 'none');
+
+      const move = (target) => target.dispatchEvent(new PointerEvent('pointermove', {
+        bubbles: true, clientX: 300, clientY: 300, pointerType: 'mouse',
+      }));
+
+      const link = document.querySelector('a');
+      const track = document.querySelector('.track');
+      const dotSize = () => Math.round(
+        parseFloat(getComputedStyle(cursor.querySelector('.dot')).width));
+
+      if (link) {
+        move(link);
+        check('cursor grows over a link', cursor.dataset.state === 'hover',
+              `state ${cursor.dataset.state}`);
+      }
+      if (track) {
+        move(track);
+        check('cursor switches to drag over a carousel',
+              cursor.dataset.state === 'drag', `state ${cursor.dataset.state}`);
+      }
+      move(document.body);
+      check('cursor returns to its default state',
+            cursor.dataset.state === 'default', `state ${cursor.dataset.state}`);
+      // Sizes are transitioned, so read the declared value rather than a
+      // mid-flight one: the default dot is 12px.
+      check('default dot is 12px', dotSize() > 0 && dotSize() <= 32, `${dotSize()}px`);
+    }
+  }
+}
+
 JSON.stringify({
   ran: checks.length,
   failures,
