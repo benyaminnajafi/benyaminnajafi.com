@@ -42,7 +42,59 @@ WAIVERS = {
         "switched with the theme; derived from --accent now, which fixes light mode",
     ("captionLink", "background-color"):
         "same hard-coded dark-theme green, same fix",
+    ("heroBand", "_box"):
+        "1440 vs 1408 wide: the original carries the 16px page gutter on the "
+        "hero itself, the rebuild carries it on the page wrapper. The band is "
+        "489px tall on both and the content starts at the same x",
+    ("heroBand", "padding-left"): "same gutter, different owner",
+    ("heroBand", "padding-right"): "same gutter, different owner",
+    ("captionLink", "transition-property"):
+        "the original also transitions border-radius and corner-shape, neither "
+        "of which changes on hover. The three that do are the same",
+    ("captionLink", "transition-duration"): "same list, same 0.2s",
+    ("carouselHint", "transform"):
+        "translateX(-50%) against the original's absolute left offset. Both "
+        "land the hint centred on the slide's bottom edge",
+    ("carouselHint", "animation-name"):
+        "the original drives its 3s-hold-1s-fade pulse from a JavaScript "
+        "variant loop; the rebuild uses a keyframe. _opacity and _blend gate "
+        "the result",
+    ("carouselHint", "animation-duration"): "same pulse, keyframe instead of JS",
+    ("slideFrame", "gap"):
+        "the original centres its slide with flex; the rebuild sizes the block "
+        "directly. _box gates the outcome",
+    ("footerBar", "gap"):
+        "space-between on a flex row versus a 1fr auto 1fr grid. Same three "
+        "positions",
+    ("detailsCol", "_box"):
+        "28px, from an empty credit slot the first case study renders for an "
+        "unused CMS field. Not every case has one, so reproducing it pushed "
+        "the three text-driven rows 28px past the reference. The row heights "
+        "in caseRows gate what this column actually affects",
 }
+
+# Containers are captured broadly and gated narrowly, and the two builds reach
+# the same layout by different means: Framer lays out with flex 1.2/2 where the
+# rebuild uses a 1.2fr/2fr grid, sets position: relative and a white background
+# on every block, and draws its hairlines with absolutely-positioned divs rather
+# than real borders. Diffing display, position, background or border-width
+# across that reports thirty-odd differences that no reader could see, and a
+# gate that cries wolf is a gate someone turns off.
+#
+# What survives is what a reader would actually notice: the rendered box, and
+# the padding and gaps that set the spacing inside it.
+CONTAINER_GATED = {"_box", "padding-top", "padding-bottom", "gap"}
+# Containers round differently between a flex and a grid track; the regressions
+# that shipped were 17px, 28px and 205px.
+BOX_TOLERANCE = 5
+
+# How far the whole-page height may drift before it counts as a regression.
+# The rebuild lands 22px off 5457 on rounding; the collapsed-hero build was
+# 57px off, so half a percent separates the two.
+HEIGHT_TOLERANCE = 0.005
+# Per-row slack, in px. Sub-pixel rounding on a 4:3 block costs 1px a row; the
+# rows that lost their nesting were 40px out.
+ROW_TOLERANCE = 5
 
 # Box geometry belongs to the layout gate, not the type gate.
 # Text properties resolve on an <img> but never render. Comparing them just
@@ -65,6 +117,16 @@ def first_family(value: str) -> str:
     return value.split(",")[0].strip().strip('"\'')
 
 
+def within_tolerance(want: str, got: str, slack: int = BOX_TOLERANCE) -> bool:
+    """True when two 'WxH' strings agree to within `slack` px on both axes."""
+    try:
+        w1, h1 = (float(v) for v in want.split("x"))
+        w2, h2 = (float(v) for v in got.split("x"))
+    except ValueError:
+        return False
+    return abs(w1 - w2) <= slack and abs(h1 - h2) <= slack
+
+
 def main() -> None:
     if len(sys.argv) < 3:
         sys.exit(__doc__)
@@ -85,50 +147,109 @@ def main() -> None:
         sys.exit(f"theme mismatch: candidate is {candidate.get('theme')!r}, "
                  f"reference is {reference.get('theme')!r} — recapture")
 
-    cand = candidate["landmarks"]
-    ref = reference["landmarks"]
-
-    missing = [k for k in ref if k not in cand and k not in allowed_missing]
-    extra = [k for k in cand if k not in ref]
+    # Every box size in the file is width-dependent. There was a theme guard
+    # but never a width guard, so a 1280 capture could be diffed against a 1440
+    # reference and the noise would look like real regressions.
+    cand_vw, ref_vw = candidate.get("viewport"), reference.get("viewport")
+    if cand_vw and ref_vw and cand_vw != ref_vw:
+        sys.exit(f"viewport mismatch: candidate at {cand_vw}, "
+                 f"reference at {ref_vw} — recapture at the same size")
+    if not ref_vw:
+        print("note: reference predates viewport recording — recapture it")
 
     diffs: list[tuple[str, str, str, str]] = []
     waived: list[str] = []
+    absent: list[str] = []
     compared = 0
 
-    for name, ref_style in ref.items():
-        if name not in cand:
-            continue
-        for prop, ref_value in ref_style.items():
-            # `_box` is the element's rendered size and is the whole point of a
-            # layout gate — skipping every underscore key quietly excluded it,
-            # which is how a rebuild whose text wrapped differently and whose
-            # page was 200px shorter passed a "no differences" run.
-            if prop == "_text" or prop not in cand[name]:
-                continue
-            if type_only and prop in LAYOUT_ONLY:
-                continue
-            if name in IMAGE_LANDMARKS and prop in TEXT_ONLY_ON_TEXT:
-                continue
-            compared += 1
-            got = cand[name][prop]
-            if prop == "font-family":
-                # Only the first family in the stack ever renders here — both
-                # sides load the same webfont. The rest of the chain differs
-                # because Framer shipped metric-matched "… Placeholder" faces as
-                # its fallback; that changes nothing once the font has loaded.
-                got, ref_value = first_family(got), first_family(ref_value)
-            if got.strip() == ref_value.strip():
-                continue
-            if (name, prop) in WAIVERS:
-                waived.append(f"{name}.{prop}: {ref_value} → {got}")
-                continue
-            diffs.append((name, prop, ref_value, got))
+    def compare_section(kind: str) -> tuple[list[str], list[str]]:
+        """Diff one map of element -> {prop: value}. Returns (missing, extra)."""
+        nonlocal compared
+        cand_s = candidate.get(kind) or {}
+        ref_s = reference.get(kind) or {}
+        miss = [k for k in ref_s if k not in cand_s and k not in allowed_missing]
+        extra_s = [k for k in cand_s if k not in ref_s]
 
-    print(f"{compared} properties compared across {len(ref) - len(missing)} landmarks")
+        for name, ref_style in ref_s.items():
+            if name not in cand_s:
+                continue
+            for prop, ref_value in ref_style.items():
+                if prop == "_text":
+                    continue
+                if kind == "containers" and prop not in CONTAINER_GATED:
+                    continue
+                # A property the reference has and the candidate does not is a
+                # finding, not something to pass over. Skipping it quietly is
+                # how whole categories of regression stayed invisible.
+                if prop not in cand_s[name]:
+                    if (name, prop) not in WAIVERS:
+                        absent.append(f"{name}.{prop}")
+                    continue
+                if type_only and prop in LAYOUT_ONLY:
+                    continue
+                if name in IMAGE_LANDMARKS and prop in TEXT_ONLY_ON_TEXT:
+                    continue
+                compared += 1
+                got = cand_s[name][prop]
+                if prop == "font-family":
+                    # Only the first family in the stack ever renders here —
+                    # both sides load the same webfont. The rest of the chain
+                    # differs because both ship metric-matched fallback faces;
+                    # that changes nothing once the font has loaded.
+                    got, ref_value = first_family(got), first_family(ref_value)
+                if got.strip() == ref_value.strip():
+                    continue
+                # A box compared exactly turns every rounding difference into a
+                # failure. Compared with slack it still catches everything that
+                # actually shipped.
+                if prop == "_box" and within_tolerance(ref_value, got):
+                    continue
+                if (name, prop) in WAIVERS:
+                    waived.append(f"{name}.{prop}: {ref_value} → {got}")
+                    continue
+                diffs.append((name, prop, ref_value, got))
+        return miss, extra_s
+
+    missing, extra = compare_section("landmarks")
+    c_missing, c_extra = compare_section("containers")
+    missing += [f"container:{m}" for m in c_missing]
+    extra += [f"container:{e}" for e in c_extra]
+
+    # Whole-page height. This was captured from the first run and never once
+    # compared — the cheapest signal available, sitting unused in the JSON.
+    ref_h = (reference.get("page") or {}).get("scrollHeight")
+    cand_h = (candidate.get("page") or {}).get("scrollHeight")
+    if ref_h and cand_h:
+        slack = max(1, round(ref_h * HEIGHT_TOLERANCE))
+        delta = cand_h - ref_h
+        status = "ok" if abs(delta) <= slack else "OUT OF RANGE"
+        print(f"page height: {cand_h} vs {ref_h} ({delta:+d}px, ±{slack} allowed) — {status}")
+        if abs(delta) > slack:
+            diffs.append(("page", "scrollHeight", str(ref_h), str(cand_h)))
+
+    # Every case row, not just the first one.
+    ref_rows = reference.get("caseRows") or []
+    cand_rows = candidate.get("caseRows") or []
+    if ref_rows:
+        if len(ref_rows) != len(cand_rows):
+            diffs.append(("caseRows", "count", str(len(ref_rows)), str(len(cand_rows))))
+        for i, (rw, cw) in enumerate(zip(ref_rows, cand_rows), start=1):
+            r_w, r_h = (int(float(v)) for v in rw.split("x"))
+            c_w, c_h = (int(float(v)) for v in cw.split("x"))
+            if abs(r_w - c_w) > ROW_TOLERANCE or abs(r_h - c_h) > ROW_TOLERANCE:
+                diffs.append((f"caseRow[{i}]", "_box", rw, cw))
+        print(f"{len(cand_rows)} case rows checked (±{ROW_TOLERANCE}px)")
+
+    print(f"{compared} properties compared across "
+          f"{len(reference.get('landmarks') or {}) - len(missing)} landmarks and "
+          f"{len(reference.get('containers') or {})} containers")
     if waived:
         print(f"\n{len(waived)} waived:")
         for w in waived:
             print(f"  · {w}")
+    if absent:
+        print(f"\n{len(absent)} properties the reference has and the candidate "
+              f"does not: {', '.join(absent)}")
     if missing:
         print(f"\nlandmarks not found in the candidate: {', '.join(missing)}")
     if extra:
@@ -141,7 +262,7 @@ def main() -> None:
             print(f"  ✗ {f'{name}.{prop}':<{width}}  want {want!r}  got {got!r}")
         sys.exit(1)
 
-    if missing:
+    if missing or absent:
         sys.exit(1)
     print("\nno unwaived differences")
 

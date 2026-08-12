@@ -20,4 +20,14 @@ export default defineConfig({
     smartypants: false,
   },
   devToolbar: { enabled: false },
+  vite: {
+    build: {
+      // Without this the CSS minifier rewrites every media query to Level 4
+      // range syntax — `@media (width<=1199.98px)`. Safari below 16.4 does not
+      // parse that and drops the whole rule, so an older iPhone was being
+      // served the three-column desktop layout. Targeting safari15 keeps the
+      // `max-width` form.
+      cssTarget: ["chrome100", "edge100", "firefox100", "safari15"],
+    },
+  },
 });

@@ -51,9 +51,29 @@
   font-display: swap;
 }
 
+/* Metric-matched fallback.
+ *
+ * All five faces above are font-display: swap, so the first paint uses a
+ * fallback and then swaps. Falling back to plain system-ui means the swap
+ * reflows the page, because Arial and Manrope do not share metrics. The
+ * original shipped this same face under the name "Manrope Placeholder" —
+ * overriding Arial's metrics to Manrope's so the two occupy identical space
+ * and the swap is invisible. It is the cheapest CLS fix on the page.
+ */
+@font-face {
+  font-family: "Manrope Fallback";
+  src: local("Arial");
+  ascent-override: 102.74%;
+  descent-override: 28.91%;
+  line-gap-override: 0%;
+  size-adjust: 103.76%;
+}
+
 :root {
-  --font-static: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-variable: "Manrope Variable", "Manrope", system-ui, sans-serif;
+  --font-static: "Manrope", "Manrope Fallback", system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-variable: "Manrope Variable", "Manrope", "Manrope Fallback", system-ui,
+    sans-serif;
 }
 
 /* --- roles ---------------------------------------------------------------
