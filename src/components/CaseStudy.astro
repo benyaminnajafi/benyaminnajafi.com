@@ -323,31 +323,79 @@ const meta = [
 </style>
 
 <script>
-  // Drag-to-scroll for a mouse. Touch already does this natively, and with this
-  // script absent the strip is still scrollable and every slide still renders.
+  // Click and drag, which is what the hint promises.
+  //
+  // The original advances one slide on click and treats a gesture as a swipe
+  // only past a small threshold. Without the click half, the only way to reach
+  // slides two and up was to guess that the strip could be dragged.
+  const SWIPE = 5; // px of travel before a gesture stops counting as a click
+
   for (const track of document.querySelectorAll<HTMLElement>(".track")) {
     let startX = 0;
     let startLeft = 0;
+    let moved = 0;
     let dragging = false;
 
+    const advance = () => {
+      const step = track.clientWidth;
+      if (!step) return;
+      const last = track.children.length - 1;
+      const next = Math.round(track.scrollLeft / step) + 1;
+      track.scrollTo({ left: (next > last ? 0 : next) * step, behavior: "smooth" });
+    };
+
     track.addEventListener("pointerdown", (e) => {
-      if (e.pointerType !== "mouse") return;
-      dragging = true;
       startX = e.clientX;
       startLeft = track.scrollLeft;
-      track.setPointerCapture(e.pointerId);
+      moved = 0;
+      // Only a mouse is scrolled by hand; touch already does this natively and
+      // taking it over is what made the first build feel laggy on a phone.
+      dragging = e.pointerType === "mouse";
+      if (dragging) track.setPointerCapture(e.pointerId);
     });
 
     track.addEventListener("pointermove", (e) => {
+      const dx = e.clientX - startX;
+      moved = Math.max(moved, Math.abs(dx));
       if (!dragging) return;
       e.preventDefault();
-      track.scrollLeft = startLeft - (e.clientX - startX);
+      track.scrollLeft = startLeft - dx;
     });
 
-    const end = () => {
+    track.addEventListener("pointerup", () => {
+      if (moved < SWIPE) advance();
       dragging = false;
-    };
-    track.addEventListener("pointerup", end);
-    track.addEventListener("pointercancel", end);
+    });
+    track.addEventListener("pointercancel", () => {
+      dragging = false;
+    });
+
+    // Arrow keys, since the strip is focusable.
+    track.addEventListener("keydown", (e) => {
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      e.preventDefault();
+      const step = track.clientWidth;
+      const delta = e.key === "ArrowRight" ? step : -step;
+      track.scrollTo({ left: track.scrollLeft + delta, behavior: "smooth" });
+    });
+  }
+
+  // The hint only pulses while its carousel is on screen — the original passes
+  // pauseOffscreen: true. Without it all seven cycle in lockstep from load, so
+  // every panel on the page lights up at once and the label reads as a stray
+  // mark on the artwork rather than a passing hint.
+  const hints = document.querySelectorAll<HTMLElement>(".hint");
+  if (hints.length && "IntersectionObserver" in window) {
+    for (const hint of hints) hint.style.animationPlayState = "paused";
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const hint = entry.target.querySelector<HTMLElement>(".hint");
+          if (hint) hint.style.animationPlayState = entry.isIntersecting ? "running" : "paused";
+        }
+      },
+      { threshold: 0.35 },
+    );
+    for (const slides of document.querySelectorAll(".slides")) io.observe(slides);
   }
 </script>

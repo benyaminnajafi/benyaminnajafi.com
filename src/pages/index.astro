@@ -72,6 +72,10 @@ const cases = (await getCollection("caseStudies")).sort(
     grid-template-columns: 1.2fr 2fr;
     gap: 16px;
     padding-block: 16px;
+    /* The original rules this row off at its foot, the same as every case
+     * study card. Moving the cards' rule from top to bottom took this line
+     * with it, because it used to come from the first card's top border. */
+    border-bottom: 1px solid var(--hairline);
   }
 
   /* 16px top and bottom, and no rule of its own: the last case study's own

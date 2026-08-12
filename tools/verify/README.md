@@ -73,13 +73,24 @@ Animations are settled before measuring — finite ones jumped to their end,
 looping ones pinned to the start of their cycle — or an animated element
 reports whatever phase the capture happened to catch.
 
-## 4. What no automated gate here can see
+## 4. Behaviour
 
-Run these by hand before merging. Every one of them is a defect the first
-rebuild shipped:
+    $B goto http://localhost:4321/
+    $B eval tools/verify/check_behaviour.js --raw
+
+Eight assertions the style gate structurally cannot make. All three defects
+found in review after the first fix pass — clicking a carousel doing nothing,
+the rule under "Selected Case Studies" disappearing when the case rule moved
+from top to bottom, and all seven hints pulsing at once — are caught here and
+were not caught by the 507-property run. Verified both ways: the script fails
+on the build that had them and passes on the one that does not.
+
+Run it at **1440x900**; the offscreen-hint assertion assumes only one carousel
+is on screen.
+
+## 5. What is still eyes-only
 
 - the staged entrance cascade, and its order (0.3 / 0.6 / 0.9 / 1.2s)
-- the carousel hint's pulse, and that it is **not** permanently on
 - dragging a carousel, and that it does not select the caption behind it
 - `/#case-studies` actually landing on the case studies
 - the page at 1440 / 1280 / 768 / 375, against `.baseline/home-*.png`

@@ -19,7 +19,8 @@ __pycache__/
 dist/
 node_modules/
 
-# `astro preview` writes these each run; the generated types beside them are
-# committed on purpose.
-.astro/preview.json
-.astro/preview.log
+# `astro preview` writes these each run, and drops a copy wherever it is run
+# from — hence the leading **. The generated types beside them are committed
+# on purpose.
+**/.astro/preview.json
+**/.astro/preview.log
