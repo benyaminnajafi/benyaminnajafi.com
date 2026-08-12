@@ -3,13 +3,15 @@ import "../styles/tokens.css";
 import "../styles/type.css";
 import "../styles/base.css";
 import profile from "../../content/profile.json";
-import SmoothScroll from "../components/SmoothScroll.astro";
 
 interface Props {
   title: string;
   description?: string;
+  canonical?: string;
 }
-const { title, description = profile.bio } = Astro.props;
+const { title, description = profile.bio, canonical } = Astro.props;
+const canonicalUrl = new URL(canonical ?? Astro.url.pathname, Astro.site).href;
+const ogImage = new URL("/og-image.webp", Astro.site).href;
 ---
 
 <!doctype html>
@@ -19,10 +21,23 @@ const { title, description = profile.bio } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={Astro.site} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- The original shipped both icons and a full social card; the first
+         rebuild shipped neither, so every link shared to LinkedIn or Slack
+         unfurled as a bare URL. -->
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
 
     <!--
       Theme, before first paint.
@@ -48,7 +63,6 @@ const { title, description = profile.bio } = Astro.props;
     <main class="page">
       <slot />
     </main>
-    <SmoothScroll />
   </body>
 </html>
 

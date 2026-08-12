@@ -7,11 +7,15 @@ import ThemeToggle from "./ThemeToggle.astro";
 
 <header class="hero">
   <div class="identity">
+    <!-- Toggle and title sit on one row, so the job title is indented to the
+         name's left edge rather than back under the toggle. -->
     <div class="name-row">
       <ThemeToggle />
-      <h1 class="t-name">{profile.name}</h1>
+      <div class="title-block appear" style="--appear-delay:0.3s">
+        <h1 class="t-name">{profile.name}</h1>
+        <p class="t-job-title">{profile.jobTitle}</p>
+      </div>
     </div>
-    <p class="t-job-title">{profile.jobTitle}</p>
   </div>
 
   <div class="about">
@@ -20,11 +24,12 @@ import ThemeToggle from "./ThemeToggle.astro";
       alt={`${profile.name}, ${profile.jobTitle}`}
       widths={[200, 400]}
       sizes="200px"
-      class="portrait"
+      class="portrait appear appear-portrait"
+      style="--appear-delay:0.9s"
       loading="eager"
       fetchpriority="high"
     />
-    <div class="about-text">
+    <div class="about-text appear" style="--appear-delay:0.6s">
       <p class="t-bio" set:html={profile.bioHtml ?? profile.bio} />
       <ul class="contacts">
         <li><a class="t-link" href={`mailto:${profile.email}`}>{profile.email}</a></li>
@@ -46,6 +51,13 @@ import ThemeToggle from "./ThemeToggle.astro";
     grid-template-columns: 1.2fr 2fr;
     gap: 16px;
     padding-block: 24px 16px;
+    /* The hero is a band, not a content-height block. Framer set
+     * min-height: calc(var(--framer-viewport-height, 100vh) * .52) and pinned
+     * the about column to a fixed 449px, so the band is max(52vh, 489px):
+     * measured 489 at both 600px and 900px tall, 624 at 1200px. Without this
+     * the whole page starts flush against the top edge. */
+    min-height: 52dvh;
+    align-items: start;
   }
 
   /* Name and job title share one width: whichever of the two is wider sets it,
@@ -67,18 +79,45 @@ import ThemeToggle from "./ThemeToggle.astro";
 
   .name-row {
     display: flex;
-    align-items: center;
-    gap: 16px;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  /* The toggle is optically centred on the name's line, not on the two lines
+   * together — measured at y=26 against a name box starting at y=15. */
+  .name-row :global(.theme-toggle) {
+    margin-block-start: 2px;
+  }
+
+  .title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .about {
     display: flex;
     gap: 16px;
+    align-items: flex-start;
+    /* Framer hard-codes height: 449px on this block at desktop. It is what
+     * gives the hero its trailing whitespace: the bio and contacts total
+     * 238px and the remaining 211px is deliberate empty space. */
+    min-height: 449px;
   }
 
   .portrait {
-    width: 200px;
+    /* A share of the column, not a fixed width — 23% of 870 is the 200px the
+     * original measures at 1440, and it keeps scaling down instead of holding
+     * a phone-sized screen hostage to a 200px photo. */
+    width: 23%;
+    max-width: 240px;
+    /* Not the file's own 959x1152 (0.832) — the original crops to a taller
+     * frame, which is why the rebuild's portrait came out 240px instead of
+     * 271px tall. */
+    aspect-ratio: 0.738462;
     height: auto;
+    object-fit: cover;
+    border: 1px solid var(--hairline);
     border-radius: 4px;
     flex: none;
   }
@@ -98,21 +137,84 @@ import ThemeToggle from "./ThemeToggle.astro";
   .contacts {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     align-items: flex-start;
   }
 
   /* Below the point where two columns stop fitting, the hero stacks. The
-   * original shipped a separate markup variant for this; one rule does it. */
-  @media (max-width: 1199.98px) {
+   * original shipped a separate markup variant for this; one rule does it.
+   * The band ratio changes too: 60vh on tablet, 50vh on phone. */
+  /* Below 1200 the bio leaves the photo's side and moves under the title, and
+   * the photo takes a column of its own. `display: contents` on .about lets
+   * its two children become grid items directly, so all three arrangements
+   * come out of one set of markup.
+   *
+   * Tablet flips the split from 1.2/2 to 2/1: at 900 the original measures a
+   * 568px text column beside a 284px photo column, with the photo at 68% of
+   * it. */
+  @media (min-width: 810px) and (max-width: 1199.98px) {
     .hero {
-      grid-template-columns: 1fr;
+      grid-template-columns: 2fr 1fr;
+      min-height: 60dvh;
+    }
+    .about {
+      display: contents;
+    }
+    .identity {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .about-text {
+      grid-column: 1;
+      grid-row: 2;
+      /* Same trailing whitespace the desktop band has, at the height the
+       * original sets for this breakpoint. */
+      min-height: 444px;
+    }
+    .portrait {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      align-self: start;
+      /* Pinned to the right edge of its column: at 900 the original sits it at
+       * x=691 in a column that starts at 600. */
+      justify-self: end;
+      width: 68%;
     }
   }
 
-  @media (max-width: 599.98px) {
+  /* Phone: one column, and the photo leads — at 375 the original puts it at
+   * the top left and the name below it, not the other way round. */
+  @media (max-width: 809.98px) {
+    .hero {
+      grid-template-columns: 1fr;
+      min-height: 50dvh;
+      padding-block: 24px 12px;
+    }
     .about {
+      display: contents;
+    }
+    .portrait {
+      grid-row: 1;
+      width: 21%;
+    }
+    .identity {
+      grid-row: 2;
+    }
+    .about-text {
+      grid-row: 3;
+      min-height: 340px;
+    }
+  }
+
+  /* Below 1200 the toggle sits above the title rather than beside it, so the
+   * name starts at the gutter instead of 32px in. */
+  @media (max-width: 1199.98px) {
+    .name-row {
       flex-direction: column;
+      gap: 16px;
+    }
+    .name-row :global(.theme-toggle) {
+      margin-block-start: 0;
     }
   }
 </style>

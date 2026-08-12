@@ -13,7 +13,12 @@ const cases = (await getCollection("caseStudies")).sort(
 <BaseLayout title={`${profile.name}・${profile.jobTitle}`}>
   <Hero />
 
-  <section id="case-studies" aria-labelledby="case-studies-title">
+  <section
+    id="case-studies"
+    class="appear-rise"
+    style="--appear-delay:1.2s"
+    aria-labelledby="case-studies-title"
+  >
     <div class="section-head">
       <h2 id="case-studies-title"><a class="t-meta" href="#case-studies">Selected Case Studies</a></h2>
       <p class="t-meta">Updated: {profile.updated}</p>
@@ -46,6 +51,13 @@ const cases = (await getCollection("caseStudies")).sort(
   /* Both of these size to their text in the original, not to the column. */
   .section-head a {
     display: inline;
+    /* The original gives this link the same 0.2s colour fade its other links
+     * have; the rebuild had left it as the one link on the page with no
+     * hover state at all. */
+    transition: color 0.2s linear;
+  }
+  .section-head a:hover {
+    color: var(--text-emphasis);
   }
   /* Sizes to its text, not to the column it sits in. */
   .section-head p {
@@ -62,13 +74,16 @@ const cases = (await getCollection("caseStudies")).sort(
     padding-block: 16px;
   }
 
+  /* 16px top and bottom, and no rule of its own: the last case study's own
+   * bottom border already separates the footer, so a border-top here drew a
+   * second line. The original's footer is 56px tall; with 32px of bottom
+   * padding and an extra hairline this was 73px. */
   .site-footer {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
     gap: 16px;
-    padding-block: 16px 32px;
-    border-top: 1px solid var(--hairline);
+    padding-block: 16px;
   }
 
   .site-footer > :last-child {

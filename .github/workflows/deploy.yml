@@ -38,6 +38,18 @@ jobs:
       # build on the laptop and neither drifts on its own.
       - run: npm ci
 
+      # The content gate, before the build rather than after it. It needs no
+      # browser, so it costs seconds and it fails the deploy rather than
+      # shipping a page with the wrong words on it.
+      #
+      # The style and layout gate is not here: it measures a real browser
+      # against the Framer mirror on a second port, which CI cannot do without
+      # a Playwright runner. It is the pre-merge step in tools/verify/README.md
+      # and it is the one that matters — the first rebuild shipped a collapsed
+      # hero, no entrance animations and a stretched carousel while every
+      # automated check passed.
+      - run: npm run verify
+
       - run: npm run build
 
       - uses: actions/configure-pages@v5

@@ -42,7 +42,27 @@ def normalise(text: str) -> list[str]:
         line = line.rstrip(":").strip()
         if line:
             lines.append(line)
-    return lines
+    return split_caption_links(lines)
+
+
+# "See how we scaled: Read case study ⤴︎" renders as one line on both builds,
+# but the original holds the caption and the link in separate block elements,
+# so innerText breaks it in two. Splitting the rebuild's single line the same
+# way compares the words rather than the markup — otherwise every case study
+# reports two false differences and the gate is noise.
+CAPTION_LINK = re.compile(r"^(?P<caption>.+?):\s+(?P<link>(?:Read case study|Visit \S+).*)$")
+
+
+def split_caption_links(lines: list[str]) -> list[str]:
+    out: list[str] = []
+    for line in lines:
+        m = CAPTION_LINK.match(line)
+        if m:
+            out.append(m.group("caption").strip())
+            out.append(m.group("link").strip())
+        else:
+            out.append(line)
+    return out
 
 
 def main() -> None:

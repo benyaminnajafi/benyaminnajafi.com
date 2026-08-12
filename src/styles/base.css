@@ -24,14 +24,21 @@ body {
   font-family: var(--font-variable);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* The original set this on body from JS. It stops the rubber-band overscroll
+   * revealing a band of browser chrome past the page edges. */
+  overscroll-behavior: none;
 }
 
-/* was Scrollbar_disable.tsx — the page hides its scrollbar but stays scrollable */
-body {
-  scrollbar-width: none;
-}
-body::-webkit-scrollbar {
-  display: none;
+/* was Scrollbar_disable.tsx — the page hides its scrollbar but stays scrollable.
+ * Desktop only: the original passed forceHide: false at the tablet and phone
+ * breakpoints, where an overlay scrollbar is the only scroll affordance. */
+@media (min-width: 1200px) {
+  body {
+    scrollbar-width: none;
+  }
+  body::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 h1,
@@ -69,8 +76,62 @@ img {
   outline-offset: 3px;
 }
 
+/* --- entrance cascade ------------------------------------------------------
+ *
+ * The original ran twelve Framer "appear" animations as one staged load-in:
+ * every element started at opacity 0.001 and faded in on a spring with
+ * bounce: 0 and duration: 1, at 0.3 / 0.6 / 0.9 / 1.2s. A zero-bounce spring
+ * has no overshoot, so a cubic-bezier reproduces it without a library.
+ *
+ * These fire on load only. The original had no scroll-triggered reveals at
+ * all, so nothing here is tied to scroll position.
+ *
+ * The initial state is CSS, not JS: setting opacity from a script would let
+ * the page paint once at full opacity first and then jump.
+ */
+@keyframes appear-fade {
+  from {
+    opacity: 0.001;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes appear-rise {
+  from {
+    opacity: 0.001;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.appear {
+  opacity: 0.001;
+  animation: appear-fade 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: var(--appear-delay, 0.3s);
+  will-change: opacity;
+}
+
+/* The works section is the one element that also travels — 16px up. */
+.appear-rise {
+  opacity: 0.001;
+  animation: appear-rise 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: var(--appear-delay, 1.2s);
+  will-change: opacity, transform;
+}
+
+/* The portrait used a tween rather than a spring, with its own curve. */
+.appear-portrait {
+  animation-timing-function: cubic-bezier(0.44, 0, 0.56, 1);
+}
+
 /* Every animation on this site used the same curve and duration: linear, 0.2s.
- * Honour a reduced-motion preference rather than reproducing that faithfully. */
+ * Honour a reduced-motion preference rather than reproducing that faithfully.
+ * The original checked this too, via data-framer-appear-animation="reduce". */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -79,5 +140,11 @@ img {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  /* Skipping the animation must not leave the page invisible. */
+  .appear,
+  .appear-rise {
+    opacity: 1;
+    transform: none;
   }
 }

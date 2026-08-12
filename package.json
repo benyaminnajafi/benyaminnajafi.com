@@ -8,10 +8,12 @@
     "build": "astro build",
     "preview": "astro preview",
     "extract": "python3 tools/extract_content.py && python3 tools/organize_assets.py",
-    "verify": "python3 tools/verify_content.py"
+    "verify": "python3 tools/verify_content.py",
+    "verify:styles": "python3 tools/verify/compare_styles.py",
+    "verify:text": "python3 tools/verify/compare_text.py",
+    "reference": "python3 -m http.server 8099 --directory site"
   },
   "dependencies": {
-    "astro": "^7.2.1",
-    "lenis": "^1.3.26"
+    "astro": "^7.2.1"
   }
 }
