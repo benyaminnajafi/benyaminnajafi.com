@@ -74,15 +74,23 @@ const meta = [
               src={img}
               alt={`${title} — slide ${i + 1}`}
               {/*
-                Steps every ~256px rather than doubling. With only 512 and
-                1024 to choose from, a phone at 412px and DPR 1.75 needs 721px
-                and has to take the 1024 — 58% of it wasted. A 768 step covers
-                that case almost exactly.
+                Steps chosen from the widths this slide is actually rendered
+                at, not by doubling.
 
-                Above 1440 the page stops growing and the slide stays 870px,
-                so the vw expression is capped rather than left to climb.
+                880 is the important one: the slide is 870px once the page
+                caps at 1440, and 804px on a narrower desktop. With only 768
+                and 1024 to choose from, a 1x desktop at 804 had to take the
+                1024 and throw away 15 KiB. 880 covers both, and is still
+                larger than the box it is drawn into — so nothing is upscaled
+                and nothing is softened.
+
+                1536 does the same job for a 2x desktop, which needs between
+                1488 and 1740.
+
+                Below 1200 the slide is the full width, so 512 and 768 cover a
+                phone at 1x and 2x, and 1024-1920 cover a tablet.
               */}
-              widths={[512, 768, 1024, 1280, 1600, 1920]}
+              widths={[512, 768, 880, 1024, 1280, 1536, 1920]}
               sizes="(max-width: 1199px) 100vw, (min-width: 1440px) 880px, 62vw"
               loading={eager && i === 0 ? "eager" : "lazy"}
               draggable="false"
