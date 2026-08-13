@@ -106,6 +106,19 @@ const meta = [
      * puts no line above the first card and does put one under the last. */
     border-bottom: 1px solid var(--hairline);
     align-items: start;
+
+    /* Skip rendering rows that are nowhere near the viewport, which also stops
+     * their slides being fetched. loading="lazy" does not defer an image
+     * inside a horizontal scroller: the browser was pulling the first three
+     * slides of all seven case studies on load — 21 images, 409 KiB, for one
+     * visible slide. This is the CSS way to say "not yet", so it costs no
+     * JavaScript and still works with scripting off.
+     *
+     * The intrinsic size is the measured row height, so the scrollbar does not
+     * jump as rows are realised; `auto` lets the browser remember the real
+     * height once it has laid one out. */
+    content-visibility: auto;
+    contain-intrinsic-size: auto 690px;
   }
 
   .details {

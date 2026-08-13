@@ -137,6 +137,12 @@ const CONTAINERS = [
   ['footerBar', () => commonAncestor(byText('Back to Top'), startsWith('© Benyamin Najafi'))],
 ];
 
+// Realise every row before measuring. Case rows carry content-visibility:auto
+// so that off-screen slides are never fetched, which means an unrendered row
+// reports its contain-intrinsic-size estimate rather than its real height —
+// and the page height with it. A reader who scrolls sees the real thing.
+for (const el of document.querySelectorAll('.case')) el.style.contentVisibility = 'visible';
+
 // Release every scroll reveal before measuring. Items below the fold sit at
 // opacity 0 until they are scrolled to, so a capture taken at the top of the
 // page reports the third case study's link as invisible — which is true at
