@@ -45,8 +45,15 @@ width-dependent, and there used to be a theme guard but no width guard.
 
 ## 3. Compare
 
+    $B eval tools/capture_text.js --out /tmp/candidate.txt --raw
     npm run verify:styles -- <candidate.json> <reference.json>
     npm run verify:text   -- <candidate.txt>
+
+Capture the text with that script rather than reading `innerText` directly.
+Case rows carry `content-visibility: auto` so their slides are not fetched
+until scrolled to, and `innerText` reports rendered text only — five case
+studies go missing from a naive capture. Both capture scripts realise the rows
+first, for the same reason they settle animations and release reveals.
 
 Differences fail the run unless they are in `WAIVERS`, each with a written
 reason. `--allow-missing=a,b` names landmarks a partial fixture lacks.
