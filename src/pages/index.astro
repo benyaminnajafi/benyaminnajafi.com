@@ -101,9 +101,28 @@ const cases = (await getCollection("caseStudies")).sort(
     justify-content: center;
   }
 
+  /* This row never stacks. Collapsing it to one column put the date on its own
+   * line under the heading; the original keeps both on one line and pushes the
+   * date to the right gutter — measured at 1100, its right edge sits at 1084,
+   * flush with the content edge. */
   @media (max-width: 1199.98px) {
     .section-head {
+      grid-template-columns: auto 1fr;
+    }
+    .section-head > p {
+      justify-self: end;
+      text-align: right;
+    }
+  }
+
+  /* And on a phone the original drops the date altogether rather than
+   * squeezing it — at 600 and 375 it is not in the page at all. */
+  @media (max-width: 809.98px) {
+    .section-head {
       grid-template-columns: 1fr;
+    }
+    .section-head > p {
+      display: none;
     }
   }
 

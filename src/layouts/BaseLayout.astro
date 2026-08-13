@@ -4,6 +4,14 @@ import "../styles/type.css";
 import "../styles/base.css";
 import profile from "../../content/profile.json";
 import Cursor from "../components/Cursor.astro";
+// The bio paragraph is the LCP element, and it is set in Manrope 600 — so the
+// font is on the critical path, not competing with it. Lighthouse put the
+// fonts at the end of the longest request chain (3.0s) because nothing
+// discovers them until the inlined CSS has been parsed and matched. These two
+// cover every word above the fold: 600 for the bio, the variable face for the
+// section head, meta rows and links.
+import manrope600 from "../assets/fonts/manrope-600.woff2";
+import manropeVariable from "../assets/fonts/manrope-variable.woff2";
 
 interface Props {
   title: string;
@@ -27,6 +35,21 @@ const ogImage = new URL("/og-image.webp", Astro.site).href;
     <!-- The original shipped both icons and a full social card; the first
          rebuild shipped neither, so every link shared to LinkedIn or Slack
          unfurled as a bare URL. -->
+    <link
+      rel="preload"
+      href={manrope600}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href={manropeVariable}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
     <link rel="icon" href="/favicon.png" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
