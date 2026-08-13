@@ -155,17 +155,34 @@ const check = (name, ok, detail) => {
           !!hidden && hidden.transform !== 'none',
           `transform ${hidden && hidden.transform}`);
 
-    // The colours cross-fade too, which the original does not do. Clicking
-    // arms the class; it is removed once the fade is over.
-    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // The glyphs are the original's, not redrawn. A hand-drawn sun with
+    // rounded stroke rays reads as a different mark next to this one.
+    const sunPath = sun.querySelector('path');
+    check('the sun is the original glyph',
+          !!sunPath && (sunPath.getAttribute('d') || '').startsWith('M 4.995 10'),
+          'the icon has been redrawn');
+    const moonPath = moon.querySelector('path');
+    check('the moon is the original glyph',
+          !!moonPath && (moonPath.getAttribute('d') || '').startsWith('M 8.006 16'),
+          'the icon has been redrawn');
+
+    // The lag guard. Softening the swap by transitioning every element made
+    // the page set up and tear down a transition per node; ordinary content
+    // must carry no long transition of its own.
+    const inert = [...document.querySelectorAll('.case img, .t-body, .meta-row, .slides')];
+    const dragging = inert.filter((e) => parseFloat(getComputedStyle(e).transitionDuration) > 0.25);
+    check('no blanket transition on ordinary elements', dragging.length === 0,
+          `${dragging.length} of ${inert.length} carry one`);
+
+    // The swap is synchronous on purpose: anything that defers it, including a
+    // view transition's snapshot frame, reads as hesitation on the click.
     const before = document.documentElement.dataset.theme;
     button.click();
-    const armed = document.documentElement.classList.contains('theme-changing');
-    check('the colour change cross-fades', still ? !armed : armed,
-          'the swap is instant');
-    check('the switch actually flips the theme',
+    check('the switch flips the theme',
           document.documentElement.dataset.theme !== before,
           `still ${document.documentElement.dataset.theme}`);
+    check('the choice is remembered',
+          localStorage.getItem('theme') === document.documentElement.dataset.theme);
     button.click(); // put it back
   }
 }

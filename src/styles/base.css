@@ -92,24 +92,18 @@ img {
 /* --- theme change ----------------------------------------------------------
  *
  * A departure from the original, which repaints instantly: measured, its h1 is
- * already the new colour in the first 50ms sample. Instant reads as a glitch
- * rather than a choice, so the colours cross-fade here.
+ * already the new colour in the first 50ms sample.
  *
- * The transition is only live while the switch is being thrown. Leaving it on
- * permanently would put a 0.35s lag on the link hover states, which have their
- * own 0.2s curve and are meant to feel immediate.
+ * Two attempts at softening it made it worse. Transitioning every element in
+ * the tree meant a page with 37 images had to set up, tick and tear down a
+ * transition per node. A view transition moved that to the GPU but costs a
+ * snapshot frame before anything happens, which is its own hesitation.
+ *
+ * So the colours cut, as they do in the original. What carries the change is
+ * the icon: it rotates and fades over 0.35s while the page behind it has
+ * already settled. That is where the original's smoothness comes from, and
+ * chasing it with a colour fade was solving the wrong half.
  */
-:root.theme-changing,
-:root.theme-changing *,
-:root.theme-changing *::before,
-:root.theme-changing *::after {
-  transition:
-    background-color 0.35s ease,
-    color 0.35s ease,
-    border-color 0.35s ease,
-    text-decoration-color 0.35s ease,
-    fill 0.35s ease !important;
-}
 
 /* --- reveal on scroll ------------------------------------------------------
  *
@@ -137,10 +131,6 @@ img {
   :root[data-reveal-ready] .reveal {
     opacity: 1;
     transform: none;
-  }
-  :root.theme-changing,
-  :root.theme-changing * {
-    transition: none !important;
   }
   html {
     scroll-behavior: auto;
