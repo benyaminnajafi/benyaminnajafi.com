@@ -103,8 +103,21 @@
 
   const sync = () => button?.setAttribute("aria-pressed", String(isDark()));
 
+  // The colours cross-fade rather than cutting. The class is only on for the
+  // length of the fade: left on permanently it would add 0.35s of lag to every
+  // link hover, which has its own faster curve.
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let settle: ReturnType<typeof setTimeout>;
+
   button?.addEventListener("click", () => {
     const next = isDark() ? "light" : "dark";
+
+    if (!still) {
+      root.classList.add("theme-changing");
+      clearTimeout(settle);
+      settle = setTimeout(() => root.classList.remove("theme-changing"), 400);
+    }
+
     root.dataset.theme = next;
     localStorage.setItem("theme", next);
     sync();

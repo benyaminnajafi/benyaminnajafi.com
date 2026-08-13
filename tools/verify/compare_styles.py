@@ -71,6 +71,18 @@ WAIVERS = {
         "in caseRows gate what this column actually affects",
 }
 
+# Landmarks the rebuild deliberately does not have. Distinct from a waiver: a
+# waiver says "these differ and that is fine", this says "this is gone on
+# purpose". Both need a written reason, and neither may be added to make a red
+# run go green — the point of the gate is that a departure is a decision
+# somebody made, not something that drifted.
+DEPARTURES = {
+    "carouselHint":
+        "the pulsing 'Click or Drag' label over each slide, removed by request. "
+        "On a pointer the custom cursor already says the strip is draggable; "
+        "the label was reading as a watermark on the artwork",
+}
+
 # Containers are captured broadly and gated narrowly, and the two builds reach
 # the same layout by different means: Framer lays out with flex 1.2/2 where the
 # rebuild uses a 1.2fr/2fr grid, sets position: relative and a white background
@@ -137,6 +149,7 @@ def main() -> None:
         a.split("=", 1)[1] for a in sys.argv if a.startswith("--allow-missing=")
     }
     allowed_missing = {n for spec in allowed_missing for n in spec.split(",")}
+    allowed_missing |= set(DEPARTURES)
 
     # Refuse to compare a light capture against a dark one. localStorage is
     # per-origin, so a theme set on one port does not apply to another, and the
@@ -245,6 +258,13 @@ def main() -> None:
         print(f"\n{len(waived)} waived:")
         for w in waived:
             print(f"  · {w}")
+    gone = [k for k in DEPARTURES if k in (reference.get("landmarks") or {})
+            and k not in (candidate.get("landmarks") or {})]
+    if gone:
+        print(f"\n{len(gone)} deliberate departures from the reference:")
+        for k in gone:
+            print(f"  · {k}: {DEPARTURES[k]}")
+
     if absent:
         print(f"\n{len(absent)} properties the reference has and the candidate "
               f"does not: {', '.join(absent)}")

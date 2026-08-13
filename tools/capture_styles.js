@@ -137,12 +137,19 @@ const CONTAINERS = [
   ['footerBar', () => commonAncestor(byText('Back to Top'), startsWith('© Benyamin Najafi'))],
 ];
 
+// Release every scroll reveal before measuring. Items below the fold sit at
+// opacity 0 until they are scrolled to, so a capture taken at the top of the
+// page reports the third case study's link as invisible — which is true at
+// that moment and says nothing about how it is built. A reader who scrolls
+// sees all of it, and that is the page being measured.
+for (const el of document.querySelectorAll('.reveal')) el.classList.add('is-visible');
+
 // Settle every animation before measuring. An animated element reports
-// whatever phase it happens to be in when the capture runs, so the carousel
-// hint reads 0.6 on one run and 0 on the next. Finite animations are jumped to
-// their end — the entrance cascade has finished by the time a reader looks —
-// and looping ones are pinned to the start of their cycle, which is the state
-// both builds rest in.
+// whatever phase it happens to be in when the capture runs, so an entrance
+// fade reads 0.6 on one run and 0 on the next. Finite animations are jumped to
+// their end — the cascade has finished by the time a reader looks — and
+// looping ones are pinned to the start of their cycle, which is the state both
+// builds rest in.
 for (const a of document.getAnimations()) {
   try {
     const iterations = a.effect && a.effect.getTiming ? a.effect.getTiming().iterations : 1;

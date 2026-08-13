@@ -15,6 +15,10 @@
 html {
   font-size: 100%; /* 1rem = 16px; every size in type.css assumes this */
   -webkit-text-size-adjust: 100%;
+  /* In-page links ease rather than jump. The original does this too — its
+   * "Back to Top" decelerates from 3991 to 202 over about a second — through a
+   * script, where one declaration does the same job. */
+  scroll-behavior: smooth;
 }
 
 body {
@@ -83,6 +87,64 @@ img {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
+}
+
+/* --- theme change ----------------------------------------------------------
+ *
+ * A departure from the original, which repaints instantly: measured, its h1 is
+ * already the new colour in the first 50ms sample. Instant reads as a glitch
+ * rather than a choice, so the colours cross-fade here.
+ *
+ * The transition is only live while the switch is being thrown. Leaving it on
+ * permanently would put a 0.35s lag on the link hover states, which have their
+ * own 0.2s curve and are meant to feel immediate.
+ */
+:root.theme-changing,
+:root.theme-changing *,
+:root.theme-changing *::before,
+:root.theme-changing *::after {
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    border-color 0.35s ease,
+    text-decoration-color 0.35s ease,
+    fill 0.35s ease !important;
+}
+
+/* --- reveal on scroll ------------------------------------------------------
+ *
+ * Also beyond the original, which animates only on load and leaves everything
+ * below the fold to appear the moment it is scrolled past. Each case study
+ * lifts and fades as it comes into view instead.
+ *
+ * The hidden state is gated on data-reveal-ready, which the script sets. With
+ * no JavaScript nothing is ever hidden, so the page cannot end up blank.
+ */
+:root[data-reveal-ready] .reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  will-change: opacity, transform;
+}
+:root[data-reveal-ready] .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-reveal-ready] .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  :root.theme-changing,
+  :root.theme-changing * {
+    transition: none !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* --- entrance cascade ------------------------------------------------------

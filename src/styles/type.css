@@ -195,15 +195,7 @@
   background-color: rgba(136, 201, 58, 0.2);
 }
 
-/* landmark: carouselHint — white on the case study's coloured slide */
-.t-hint {
-  font-family: var(--font-variable);
-  font-size: 1rem;
-  font-weight: 400; /* the variable face carries its weight in the axis below */
-  font-variation-settings: "wght" 700;
-  line-height: 1.5em;
-  color: var(--on-slide);
-}
+/* The carousel hint role is gone with the hint itself — see CaseStudy.astro. */
 
 /* The name is the one role that changes size across breakpoints:
  * 28.8px above 1200px, 25.6px below, with a looser line-height. */

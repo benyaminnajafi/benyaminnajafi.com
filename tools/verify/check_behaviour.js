@@ -61,24 +61,53 @@ const check = (name, ok, detail) => {
   }
 }
 
-// 2. Every hint pulses, and only where it can be seen.
+// 2. No label printed over the artwork. Removed by request, so its return
+//    would be a regression rather than a restoration.
 {
-  const hints = [...document.querySelectorAll('.hint')];
-  check('a hint per carousel', hints.length === document.querySelectorAll('.slides').length,
-        `${hints.length} hints for ${document.querySelectorAll('.slides').length} carousels`);
-  const animated = hints.filter((h) => getComputedStyle(h).animationName !== 'none');
-  check('the hint is animated, not pinned on', animated.length === hints.length,
-        `${hints.length - animated.length} static`);
-  const opaque = hints.filter((h) => getComputedStyle(h).animationName === 'none' &&
-                                     parseFloat(getComputedStyle(h).opacity) > 0.9);
-  check('no hint sits permanently at full opacity', opaque.length === 0,
-        `${opaque.length} always-on`);
-  // Gating is opt-in, so its absence looks like nothing rather than like a
-  // failure: with no observer at all, every hint runs and none is marked. At
-  // 1440x900 only one carousel is on screen, so some hint must be paused.
-  const paused = hints.filter((h) => h.style.animationPlayState === 'paused');
-  check('offscreen hints are paused', hints.length < 2 || paused.length > 0,
-        `none of ${hints.length} paused — every panel pulses at once`);
+  const label = [...document.querySelectorAll('.slides *')]
+    .find((e) => /Click or Drag|Tap or Drag/i.test(e.textContent || ''));
+  check('no hint text over the slides', !label);
+}
+
+// 3. Items reveal as they come into view, and nothing is left hidden.
+{
+  const reveal = [...document.querySelectorAll('.reveal')];
+  check('case studies are revealable', reveal.length > 0);
+
+  if (reveal.length) {
+    const ready = document.documentElement.hasAttribute('data-reveal-ready');
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    check('reveal is armed by script, not by CSS', ready || still,
+          'the hidden state would strand the page with no JavaScript');
+
+    // Whatever is on screen right now must already be released, or the top of
+    // the page would sit blank waiting for a scroll that never comes.
+    const onscreen = reveal.filter((el) => {
+      const r = el.getBoundingClientRect();
+      return r.top < innerHeight && r.bottom > 0;
+    });
+    const stuck = onscreen.filter((el) =>
+      !el.classList.contains('is-visible') && parseFloat(getComputedStyle(el).opacity) < 0.5);
+    check('nothing on screen is left hidden', stuck.length === 0,
+          `${stuck.length} of ${onscreen.length} still invisible`);
+  }
+}
+
+// 4. In-page links ease rather than jump.
+{
+  const html = getComputedStyle(document.documentElement);
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  check('in-page links scroll smoothly',
+        still ? html.scrollBehavior === 'auto' : html.scrollBehavior === 'smooth',
+        `scroll-behavior: ${html.scrollBehavior}`);
+  // A dragged carousel must track the pointer exactly, so the strip itself
+  // must not inherit the smooth behaviour.
+  const track = document.querySelector('.track');
+  if (track) {
+    check('the carousel strip still scrolls instantly under a drag',
+          getComputedStyle(track).scrollBehavior === 'auto',
+          `scroll-behavior: ${getComputedStyle(track).scrollBehavior}`);
+  }
 }
 
 // 3. The horizontal rules are actually painted.
@@ -125,6 +154,19 @@ const check = (name, ok, detail) => {
     check('the hidden icon is scaled and rotated away',
           !!hidden && hidden.transform !== 'none',
           `transform ${hidden && hidden.transform}`);
+
+    // The colours cross-fade too, which the original does not do. Clicking
+    // arms the class; it is removed once the fade is over.
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const before = document.documentElement.dataset.theme;
+    button.click();
+    const armed = document.documentElement.classList.contains('theme-changing');
+    check('the colour change cross-fades', still ? !armed : armed,
+          'the swap is instant');
+    check('the switch actually flips the theme',
+          document.documentElement.dataset.theme !== before,
+          `still ${document.documentElement.dataset.theme}`);
+    button.click(); // put it back
   }
 }
 
