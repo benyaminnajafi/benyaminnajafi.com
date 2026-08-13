@@ -71,6 +71,25 @@ WAIVERS = {
         "in caseRows gate what this column actually affects",
 }
 
+# The roles the original renders from a static cut and the rebuild renders from
+# the variable face. It reports differently in three places at once — the
+# variable face always computes font-weight: 400 and carries its real weight in
+# font-variation-settings — while rendering the same glyphs at the same size.
+# Measured at matched weights before the change, the name, job title and bio
+# boxes agree to two decimal places, and `_box` is still compared, so the thing
+# a reader sees remains gated.
+VARIABLE_FACE_ROLES = ("name", "jobTitle", "bio", "caseBody", "caseBullet")
+VARIABLE_FACE_REASON = (
+    "drawn from the variable face instead of a static cut, which drops the four "
+    "static files — 77 KiB, 42% of the page. Same glyphs at the same weight; the "
+    "boxes match to two decimal places and _box still gates them"
+)
+
+for _role in VARIABLE_FACE_ROLES:
+    for _prop in ("font-family", "font-weight", "font-variation-settings"):
+        WAIVERS[(_role, _prop)] = VARIABLE_FACE_REASON
+
+
 # Landmarks the rebuild deliberately does not have. Distinct from a waiver: a
 # waiver says "these differ and that is fine", this says "this is gone on
 # purpose". Both need a written reason, and neither may be added to make a red

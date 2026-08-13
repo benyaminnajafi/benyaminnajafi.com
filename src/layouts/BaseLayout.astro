@@ -9,17 +9,12 @@ import Cursor from "../components/Cursor.astro";
 // fonts at the end of the longest request chain (3.0s) because nothing
 // discovers them until the inlined CSS has been parsed and matched.
 //
-// All four faces used above the fold are preloaded, not just the bio's. The
-// metric-matched fallback fixes the vertical metrics but not the glyph
-// widths, so the name and the job title wrapped differently under it and
-// pushed the bio down when they swapped: 0.171 of layout shift, all of it
-// attributed to the 800 and 500 faces landing late.
-import manrope500 from "../assets/fonts/manrope-500.woff2";
-import manrope600 from "../assets/fonts/manrope-600.woff2";
-import manrope800 from "../assets/fonts/manrope-800.woff2";
+// One file now covers every weight on the page, so one preload does what four
+// used to. The four static cuts were dropped: the variable face spans 200-800
+// on its own and renders identically at each weight.
 import manropeVariable from "../assets/fonts/manrope-variable.woff2";
 
-const preloadFonts = [manrope600, manropeVariable, manrope800, manrope500];
+const preloadFonts = [manropeVariable];
 
 interface Props {
   title: string;

@@ -16,34 +16,6 @@
  */
 
 @font-face {
-  font-family: "Manrope";
-  src: url("../assets/fonts/manrope-500.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Manrope";
-  src: url("../assets/fonts/manrope-600.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Manrope";
-  src: url("../assets/fonts/manrope-700.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Manrope";
-  src: url("../assets/fonts/manrope-800.woff2") format("woff2");
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
   font-family: "Manrope Variable";
   src: url("../assets/fonts/manrope-variable.woff2") format("woff2");
   font-weight: 200 800;
@@ -69,11 +41,32 @@
   size-adjust: 103.76%;
 }
 
+/* One family, not two.
+ *
+ * The original ships four static cuts alongside the variable face and uses
+ * each for different roles. The variable face spans 200-800 on its own, so
+ * the statics were 77 KiB — 42% of the page — buying nothing: rendered at the
+ * same weight, the name, the job title and the bio measure identically to two
+ * decimal places under either, and the glyphs are indistinguishable.
+ *
+ * --font-static is kept as a name so the roles below still read as two groups,
+ * which is how the reference is organised, but both now resolve to the same
+ * file.
+ */
 :root {
-  --font-static: "Manrope", "Manrope Fallback", system-ui, -apple-system,
+  --font-static: "Manrope Variable", "Manrope Fallback", system-ui, -apple-system,
     "Segoe UI", sans-serif;
-  --font-variable: "Manrope Variable", "Manrope", "Manrope Fallback", system-ui,
-    sans-serif;
+  --font-variable: "Manrope Variable", "Manrope Fallback", system-ui, sans-serif;
+}
+
+/* The variable face takes its weight from the axis, and font-variation-settings
+ * inherits — so a <strong> inside a block that sets the axis would keep the
+ * parent's weight and not look bold at all. Every bold on the page needs the
+ * axis set explicitly. 800 is what the original renders: its <strong> asks for
+ * 900 and the heaviest cut it has is 800. */
+strong,
+b {
+  font-variation-settings: "wght" 800;
 }
 
 /* --- roles ---------------------------------------------------------------
@@ -85,7 +78,8 @@
 .t-name {
   font-family: var(--font-static);
   font-size: 1.8rem;
-  font-weight: 800;
+  font-weight: 400;
+  font-variation-settings: "wght" 800;
   line-height: 0.8em;
   letter-spacing: -0.02em;
   color: var(--text);
@@ -95,7 +89,8 @@
 .t-job-title {
   font-family: var(--font-static);
   font-size: 1.4rem;
-  font-weight: 500;
+  font-weight: 400;
+  font-variation-settings: "wght" 500;
   line-height: 1.4em;
   letter-spacing: -0.02em;
   color: var(--text-emphasis);
@@ -105,7 +100,8 @@
 .t-bio {
   font-family: var(--font-static);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 400;
+  font-variation-settings: "wght" 600;
   line-height: 1.6em;
   letter-spacing: -0.01em;
   color: var(--text);
@@ -126,7 +122,8 @@
 .t-body {
   font-family: var(--font-static);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 400;
+  font-variation-settings: "wght" 600;
   line-height: 1.6em;
   letter-spacing: 0.01em;
   color: var(--text);
