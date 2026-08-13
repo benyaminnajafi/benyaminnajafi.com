@@ -22,8 +22,13 @@ import ThemeToggle from "./ThemeToggle.astro";
     <Image
       src={portrait}
       alt={`${profile.name}, ${profile.jobTitle}`}
-      widths={[200, 400]}
-      sizes="200px"
+      {/*
+        The portrait is 200px at desktop but only ~72px on a phone, where the
+        photo drops to 21% of the width. Declaring a flat 200px made a phone
+        fetch the 400w file for a 72px slot — 87% of those bytes thrown away.
+      */}
+      widths={[80, 160, 200, 240, 400]}
+      sizes="(max-width: 809px) 22vw, (max-width: 1199px) 23vw, 200px"
       class="portrait appear appear-portrait"
       style="--appear-delay:0.9s"
       loading="eager"

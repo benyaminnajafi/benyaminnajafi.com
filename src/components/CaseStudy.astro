@@ -73,8 +73,17 @@ const meta = [
             <Image
               src={img}
               alt={`${title} — slide ${i + 1}`}
-              widths={[512, 1024, 1920]}
-              sizes="(max-width: 1199px) 100vw, 62vw"
+              {/*
+                Steps every ~256px rather than doubling. With only 512 and
+                1024 to choose from, a phone at 412px and DPR 1.75 needs 721px
+                and has to take the 1024 — 58% of it wasted. A 768 step covers
+                that case almost exactly.
+
+                Above 1440 the page stops growing and the slide stays 870px,
+                so the vw expression is capped rather than left to climb.
+              */}
+              widths={[512, 768, 1024, 1280, 1600, 1920]}
+              sizes="(max-width: 1199px) 100vw, (min-width: 1440px) 880px, 62vw"
               loading={eager && i === 0 ? "eager" : "lazy"}
               draggable="false"
             />
