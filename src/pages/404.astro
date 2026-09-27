@@ -1,17 +1,46 @@
 ---
+import { getRelativeLocaleUrl } from "astro:i18n";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
-import profile from "../../content/profile.json";
+import { defaultLocale, locales, ui, type Locale } from "../i18n/ui";
+import { getProfile } from "../i18n/content";
+
+const profile = getProfile(defaultLocale);
+const titleOf = (locale: Locale) => `${ui[locale].notFound}・${profile.name}`;
 ---
 
 <BaseLayout
-  title={`Page not found・${profile.name}`}
-  description="This page does not exist."
+  title={titleOf(defaultLocale)}
+  description={ui[defaultLocale].notFoundDescription}
 >
   <div class="not-found">
     <ThemeToggle />
-    <h1 class="t-name">Page not found…</h1>
-    <p><a class="t-link" href="/">Go home</a></p>
+    {
+      locales.map((locale) => (
+        <div class="message" lang={locale} hidden={locale !== defaultLocale} data-title={titleOf(locale)}>
+          <h1 class="t-name">{ui[locale].notFound}…</h1>
+          <p><a class="t-link" href={getRelativeLocaleUrl(locale)}>{ui[locale].goHome}</a></p>
+        </div>
+      ))
+    }
+    <!--
+      GitHub Pages answers every missing path with this one file, so the
+      language has to come from the address that was asked for: /de/anything
+      gets the German message and a link home to /de/. Inline and placed right
+      after the messages, so the swap happens before the first paint. With
+      scripting off, the English one stays.
+    -->
+    <script is:inline>
+      (() => {
+        const lang = location.pathname.split("/")[1];
+        const messages = [...document.querySelectorAll(".message")];
+        const match = messages.find((message) => message.lang === lang);
+        if (!match) return;
+        for (const message of messages) message.hidden = message !== match;
+        document.documentElement.lang = lang;
+        document.title = match.dataset.title;
+      })();
+    </script>
     <p class="t-meta">{profile.footer}</p>
   </div>
 </BaseLayout>
@@ -26,5 +55,14 @@ import profile from "../../content/profile.json";
     justify-content: center;
     gap: 16px;
     text-align: center;
+  }
+
+  /* Each message's heading and link sit directly in the column above, 16px
+   * apart like everything else — the wrapper only exists to carry the lang. */
+  .message {
+    display: contents;
+  }
+  .message[hidden] {
+    display: none;
   }
 </style>

@@ -7,6 +7,14 @@ export default defineConfig({
   // string at build time. The three interactive behaviours are hand-written
   // scripts, so nothing ships a runtime.
   output: "static",
+  // English stays at the root, where every link already shared points; each
+  // translation gets its own prefix (/de/). Keep this list in step with
+  // src/i18n/ui.ts, which holds the words for each one.
+  i18n: {
+    locales: ["en", "de"],
+    defaultLocale: "en",
+    routing: { prefixDefaultLocale: false },
+  },
   build: {
     // One <style> in the head instead of a request. The whole stylesheet is a
     // few KB — a separate file would cost more in latency than it saves.

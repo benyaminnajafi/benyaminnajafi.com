@@ -1,12 +1,15 @@
 ---
 // A sun that turns into a moon. The icons are inline SVG rather than CSS masks
 // so they inherit currentColor and need no extra request.
+import { localeOf, ui } from "../i18n/ui";
+
+const t = ui[localeOf(Astro.currentLocale)];
 ---
 
 <button
   class="theme-toggle"
   type="button"
-  aria-label="theme switcher"
+  aria-label={t.themeToggle}
   aria-pressed="false"
 >
   <!--

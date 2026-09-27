@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "role": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expertise": {
+      "type": "string",
+      "minLength": 1
+    },
+    "industry": {
+      "type": "string",
+      "minLength": 1
+    },
+    "caption": {
+      "default": "",
+      "type": "string"
+    },
+    "linkLabel": {
+      "type": "string",
+      "minLength": 1
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "role",
+    "expertise",
+    "industry",
+    "linkLabel"
+  ],
+  "additionalProperties": false
+}

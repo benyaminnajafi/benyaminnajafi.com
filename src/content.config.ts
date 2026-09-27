@@ -2,6 +2,22 @@ import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
 
 /**
+ * The words of a case study — every field a translation replaces. Shared by
+ * both schemas below, so a translation is held to the same rules as the
+ * original it translates.
+ */
+const words = {
+  title: z.string().min(1),
+  role: z.string().min(1),
+  expertise: z.string().min(1),
+  industry: z.string().min(1),
+  /** The plain lead-in before the link. One published case study has none,
+   *  so it is optional — but it must never carry the link text itself. */
+  caption: z.string().default(""),
+  linkLabel: z.string().min(1),
+};
+
+/**
  * The shape of a case study.
  *
  * This is the contract the future admin panel writes against. Because it is a
@@ -19,14 +35,7 @@ const caseStudies = defineCollection({
       /** Position on the page. Sparse (10, 20, 30…) so one can be moved
        *  between two others without renumbering the rest. */
       order: z.number().int().positive(),
-      title: z.string().min(1),
-      role: z.string().min(1),
-      expertise: z.string().min(1),
-      industry: z.string().min(1),
-      /** The plain lead-in before the link. One published case study has none,
-       *  so it is optional — but it must never carry the link text itself. */
-      caption: z.string().default(""),
-      linkLabel: z.string().min(1),
+      ...words,
       linkUrl: z.string().url(),
       /** The slide backdrop. Taken from the token's real declaration, never
        *  from the stale fallback Framer wrote beside it. */
@@ -39,4 +48,18 @@ const caseStudies = defineCollection({
     }),
 });
 
-export const collections = { caseStudies };
+/**
+ * A case study in another language: content/<locale>/case-studies/, one file
+ * per original and under the same file name.
+ *
+ * Strict, because a translation carries words only. Images, the accent, the
+ * link and the order always come from the English file; a translation that
+ * tried to set one of them would otherwise be ignored without a word, and
+ * this makes it fail the build instead.
+ */
+const caseStudyTranslations = defineCollection({
+  loader: glob({ pattern: "*/case-studies/*.md", base: "./content" }),
+  schema: z.strictObject(words),
+});
+
+export const collections = { caseStudies, caseStudyTranslations };

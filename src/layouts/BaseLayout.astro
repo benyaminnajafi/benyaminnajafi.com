@@ -2,7 +2,9 @@
 import "../styles/tokens.css";
 import "../styles/type.css";
 import "../styles/base.css";
-import profile from "../../content/profile.json";
+import { getAbsoluteLocaleUrl } from "astro:i18n";
+import { defaultLocale, localeOf, locales } from "../i18n/ui";
+import { getProfile } from "../i18n/content";
 import Cursor from "../components/Cursor.astro";
 // The bio paragraph is the LCP element, and it is set in Manrope 600 — so the
 // font is on the critical path, not competing with it. Lighthouse put the
@@ -20,20 +22,36 @@ interface Props {
   title: string;
   description?: string;
   canonical?: string;
+  /** The page's path inside a locale — "" for the home page. When set, the
+   *  head names the page's counterpart in every language, which is how a
+   *  search engine knows to send a German reader to /de/. Left unset on pages
+   *  that exist in one language only. */
+  localePath?: string;
 }
-const { title, description = profile.bio, canonical } = Astro.props;
+const locale = localeOf(Astro.currentLocale);
+const { title, description = getProfile(locale).bio, canonical, localePath } = Astro.props;
 const canonicalUrl = new URL(canonical ?? Astro.url.pathname, Astro.site).href;
 const ogImage = new URL("/og-image.webp", Astro.site).href;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
+    {
+      localePath !== undefined &&
+        [...locales, "x-default" as const].map((hreflang) => (
+          <link
+            rel="alternate"
+            hreflang={hreflang}
+            href={getAbsoluteLocaleUrl(hreflang === "x-default" ? defaultLocale : hreflang, localePath)}
+          />
+        ))
+    }
 
     <!-- The original shipped both icons and a full social card; the first
          rebuild shipped neither, so every link shared to LinkedIn or Slack

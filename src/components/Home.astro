@@ -1,0 +1,145 @@
+---
+// The home page, in whichever language the URL asks for: src/pages/index.astro
+// renders it at / and src/pages/de/index.astro at /de/.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "./Hero.astro";
+import CaseStudy from "./CaseStudy.astro";
+import { formatDate, localeOf, ui } from "../i18n/ui";
+import { aiSummaryUrl, getCaseStudies, getProfile } from "../i18n/content";
+
+const locale = localeOf(Astro.currentLocale);
+const t = ui[locale];
+const profile = getProfile(locale);
+const cases = await getCaseStudies(locale);
+---
+
+<BaseLayout title={`${profile.name}・${profile.jobTitle}`} localePath="">
+  <Hero />
+
+  <section
+    id="case-studies"
+    class="appear-rise"
+    style="--appear-delay:1.2s"
+    aria-labelledby="case-studies-title"
+  >
+    <div class="section-head">
+      <h2 id="case-studies-title"><a class="t-meta" href="#case-studies">{t.caseStudies}</a></h2>
+      <p class="t-meta">{t.updated}: {formatDate(profile.updated, locale)}</p>
+    </div>
+
+    {cases.map((study, i) => <CaseStudy study={study} eager={i === 0} />)}
+  </section>
+
+  <footer class="site-footer">
+    <a class="t-link" href="#top">{t.backToTop}</a>
+    <p class="ai-row t-meta">
+      {t.aiSummary}:
+      {
+        profile.aiPromptEngines.map((engine) => (
+          <a class="t-link" href={aiSummaryUrl(engine.url, profile.aiPrompt)} target="_blank" rel="noopener">
+            {engine.name}
+          </a>
+        ))
+      }
+    </p>
+    <p class="t-meta">{profile.footer}</p>
+  </footer>
+</BaseLayout>
+
+<style>
+  .section-head h2 {
+    margin: 0;
+    font: inherit;
+  }
+  /* Both of these size to their text in the original, not to the column. */
+  .section-head a {
+    display: inline;
+    /* The original gives this link the same 0.2s colour fade its other links
+     * have; the rebuild had left it as the one link on the page with no
+     * hover state at all. */
+    transition: color 0.2s linear;
+  }
+  .section-head a:hover {
+    color: var(--text-emphasis);
+  }
+  /* Sizes to its text, not to the column it sits in. */
+  .section-head p {
+    width: max-content;
+    max-width: 100%;
+  }
+
+  .section-head {
+    display: grid;
+    /* Framer sizes these with flex 1.2 and 2, which at 1440 gives
+     * exactly 522 and 870 either side of the 16px gap. */
+    grid-template-columns: 1.2fr 2fr;
+    gap: 16px;
+    padding-block: 16px;
+    /* The original rules this row off at its foot, the same as every case
+     * study card. Moving the cards' rule from top to bottom took this line
+     * with it, because it used to come from the first card's top border. */
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  /* 16px top and bottom, and no rule of its own: the last case study's own
+   * bottom border already separates the footer, so a border-top here drew a
+   * second line. The original's footer is 56px tall; with 32px of bottom
+   * padding and an extra hairline this was 73px. */
+  .site-footer {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+    padding-block: 16px;
+  }
+
+  .site-footer > :last-child {
+    justify-self: end;
+  }
+
+  .ai-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* This row never stacks. Collapsing it to one column put the date on its own
+   * line under the heading; the original keeps both on one line and pushes the
+   * date to the right gutter — measured at 1100, its right edge sits at 1084,
+   * flush with the content edge. */
+  @media (max-width: 1199.98px) {
+    .section-head {
+      grid-template-columns: auto 1fr;
+    }
+    .section-head > p {
+      justify-self: end;
+      text-align: right;
+    }
+  }
+
+  /* And on a phone the original drops the date altogether rather than
+   * squeezing it — at 600 and 375 it is not in the page at all. */
+  @media (max-width: 809.98px) {
+    .section-head {
+      grid-template-columns: 1fr;
+    }
+    .section-head > p {
+      display: none;
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .site-footer {
+      grid-template-columns: 1fr;
+      justify-items: start;
+      gap: 8px;
+    }
+    .site-footer > :last-child {
+      justify-self: start;
+    }
+    .ai-row {
+      justify-content: flex-start;
+    }
+  }
+</style>

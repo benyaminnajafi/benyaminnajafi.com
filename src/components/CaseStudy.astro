@@ -1,25 +1,33 @@
 ---
 import { Image } from "astro:assets";
 import { render } from "astro:content";
-import type { CollectionEntry } from "astro:content";
+import { localeOf, ui } from "../i18n/ui";
+import type { CaseStudyView } from "../i18n/content";
 
 interface Props {
-  entry: CollectionEntry<"caseStudies">;
+  study: CaseStudyView;
   eager?: boolean;
 }
-const { entry, eager = false } = Astro.props;
+const { study, eager = false } = Astro.props;
 const { title, role, expertise, industry, caption, linkLabel, linkUrl, accent, images } =
-  entry.data;
-const { Content } = await render(entry);
+  study.data;
+const { Content } = await render(study.body);
+
+// The labels follow the page; the words inside follow the entry, which is
+// still English where no translation exists yet. The article says which, so a
+// screen reader pronounces it right.
+const pageLocale = localeOf(Astro.currentLocale);
+const t = ui[pageLocale];
+const lang = study.lang === pageLocale ? undefined : study.lang;
 
 const meta = [
-  ["Role", role],
-  ["Expertise", expertise],
-  ["Industry", industry],
+  [t.role, role],
+  [t.expertise, expertise],
+  [t.industry, industry],
 ] as const;
 ---
 
-<article class="case reveal">
+<article class="case reveal" lang={lang}>
   <div class="details">
     <h3 class="t-case-title">{title}</h3>
 
@@ -64,15 +72,15 @@ const meta = [
       class="track"
       role="region"
       aria-roledescription="carousel"
-      aria-label={`${title} — ${images.length} slides`}
+      aria-label={t.carousel(title, images.length)}
       tabindex="0"
     >
       {
         images.map((img, i) => (
-          <figure class="slide" aria-roledescription="slide" aria-label={`Slide ${i + 1} of ${images.length}`}>
+          <figure class="slide" aria-roledescription="slide" aria-label={t.slide(i + 1, images.length)}>
             <Image
               src={img}
-              alt={`${title} — slide ${i + 1}`}
+              alt={t.slideAlt(title, i + 1)}
               {/*
                 Steps chosen from the widths this slide is actually rendered
                 at, not by doubling.

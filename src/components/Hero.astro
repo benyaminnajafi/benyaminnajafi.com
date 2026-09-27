@@ -1,8 +1,13 @@
 ---
 import { Image } from "astro:assets";
-import profile from "../../content/profile.json";
+import { localeOf, ui } from "../i18n/ui";
+import { getProfile } from "../i18n/content";
 import portrait from "../assets/portrait.jpeg";
 import ThemeToggle from "./ThemeToggle.astro";
+
+const locale = localeOf(Astro.currentLocale);
+const t = ui[locale];
+const profile = getProfile(locale);
 ---
 
 <header class="hero">
@@ -40,7 +45,7 @@ import ThemeToggle from "./ThemeToggle.astro";
         <li><a class="t-link" href={`mailto:${profile.email}`}>{profile.email}</a></li>
         <li><a class="t-link" href={`tel:${profile.phone}`}>{profile.phoneDisplay ?? profile.phone}</a></li>
         <li><a class="t-link" href={profile.linkedin} rel="me">LinkedIn</a></li>
-        <li><a class="t-link" href={profile.cvUrl}>CV</a></li>
+        <li><a class="t-link" href={profile.cvUrl}>{t.cv}</a></li>
       </ul>
     </div>
   </div>
